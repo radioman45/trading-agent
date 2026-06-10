@@ -1,0 +1,62 @@
+{
+  "status": "ok",
+  "as_of": "2026-06-11",
+  "source": "yfinance",
+  "ticker_resolved": "005930.KS",
+  "fast_info": {
+    "last_price": 302500.0,
+    "market_cap": 1986385339565000.0,
+    "shares_outstanding": 6566563106.0,
+    "year_high": 370000.0,
+    "year_low": 56900.0,
+    "currency": "KRW",
+    "exchange": "KSC"
+  },
+  "indicators": {
+    "last_close": 302500.0,
+    "last_date": "2026-06-10",
+    "rows": 244,
+    "sma": {
+      "sma20": 304325.0,
+      "sma50": 250769.0,
+      "sma200": 153740.0
+    },
+    "price_vs_sma_pct": {
+      "sma20": -0.6,
+      "sma50": 20.63,
+      "sma200": 96.76
+    },
+    "vwma20": 305876.9824,
+    "macd": {
+      "line": 20343.2938,
+      "signal": 23692.3603,
+      "histogram": -3349.0665,
+      "cross": "none"
+    },
+    "rsi14": 52.79,
+    "bollinger": {
+      "upper": 357054.9725,
+      "mid": 304325.0,
+      "lower": 251595.0275,
+      "position_0to1": 0.483
+    },
+    "atr14": 21594.9399,
+    "atr14_pct_of_price": 7.14,
+    "returns_pct": {
+      "1w": -16.09,
+      "1m": 12.66,
+      "3m": 74.35,
+      "6m": 200.1,
+      "1y": 410.98
+    },
+    "max_drawdown_pct": -23.3,
+    "high_52w": 360500.0,
+    "low_52w": 57200.0,
+    "pct_from_52w_high": -16.09,
+    "volume": {
+      "last": 1191.0,
+      "avg20": 33040461.0,
+      "last_vs_avg20": 0.0
+    }
+  }
+}

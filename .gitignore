@@ -1,0 +1,17 @@
+# 환경변수 — API 키 보호 (절대 커밋 금지)
+.env
+.env.local
+
+# 이전 스냅샷 백업 (작업 잔재)
+_workspace_ipo_prev/
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
