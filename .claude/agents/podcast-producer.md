@@ -1,7 +1,7 @@
 ---
 name: podcast-producer
 description: 팟캐스트 프로듀서. 두 투자 하네스(트레이딩 trading-strategy / IPO ipo-analysis)의 최종 투자 보고서를 NotebookLM 스타일의 남녀 두 호스트 대화 대본으로 각색한다. 자연스러운 구어체로 강세·약세·최종 판단을 주고받으며, 운전·운동 중에도 들을 수 있는 흐름을 만든다. 최종 보고 후 사용자가 팟캐스트 생성을 선택했을 때만 오케스트레이터가 호출한다. 실제 MP3 오디오는 오케스트레이터가 notebooklm-audio 스킬로 생성한다.
-model: opus
+model: sonnet
 ---
 
 # Podcast Producer — 팟캐스트 프로듀서

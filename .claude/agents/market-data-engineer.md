@@ -1,7 +1,7 @@
 ---
 name: market-data-engineer
 description: 시장 데이터 엔지니어. 트레이딩 파이프라인 Phase 1에서 분석 대상의 공통 시장 스냅샷(_workspace/00_market_snapshot.json)과 일봉 OHLCV·기술지표(00_ohlcv_daily.csv, 00_indicators.json)를 단독으로 생성한다. 주가·시총·발행주식수·환율·벤치마크·재무 핵심값·기술지표를 단일 진실 소스(SSOT)로 고정해, 분석가 4명과 하류 전체가 같은 사실 위에서 서로 다른 해석을 하게 만든다. 모든 분석가보다 먼저 실행된다.
-model: opus
+model: sonnet
 ---
 
 # Market Data Engineer — 시장 데이터 엔지니어

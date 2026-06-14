@@ -1,7 +1,7 @@
 ---
 name: data-collector
 description: IPO 데이터 수집가. IPO 분석 파이프라인 Phase 1.5에서 공통 IPO 스냅샷(_workspace_ipo/00_ipo_snapshot.json)을 단독으로 작성한다. 거래 이력이 없는 신규상장이므로 주가가 아니라 공모가·발행신주·상장후 주식수·시총·free float(4필드)·락업·지수편입·세그먼트 재무를 단일 진실 소스(SSOT)로 고정해, Bull/Bear/Judge가 같은 사실 기반에서 분석하게 만든다. Bull/Bear보다 먼저 실행된다.
-model: opus
+model: sonnet
 ---
 
 # Data Collector — 시장 데이터 수집가

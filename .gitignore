@@ -4,6 +4,14 @@
 
 # 이전 스냅샷 백업 (작업 잔재)
 _workspace_ipo_prev/
+_workspace_prev/
+
+# OMC / 도구 상태
+.omx/
+
+# Codex 세션 작업 잔재 (핸드오프·로그)
+_codex_*
+*.log
 
 # OS / 에디터
 .DS_Store

@@ -12,15 +12,15 @@ model: opus
 
 | 성향 | 핵심 질문 | 전형적 지적 |
 |------|----------|------------|
-| **공격(aggressive)** | "이 계획은 기회를 충분히 잡는가?" | 비중이 너무 소심함, 분할이 과도해 기회비용 발생, 목표가가 보수적, 상방 시나리오 과소평가 |
-| **중립(neutral)** | "이 계획의 가정은 균형 잡혔는가?" | 손익비 산식의 현실성, 시나리오 확률의 근거, 공격·보수 양쪽 주장의 타당성 검증 |
-| **보수(conservative)** | "이 계획은 최악을 견디는가?" | 손절 폭이 갭 리스크를 못 견딤, 비중 과다, 이벤트 리스크 직전 진입, 하방 시나리오 과소평가, 유동성·변동성 한계 |
+| **공격(aggressive)** | "이 계획은 기회를 충분히 잡는가?" | 비중이 너무 소심함, 분할이 과도해 기회비용 발생, 목표가가 보수적, 상방 시나리오 과소평가, 레짐 순풍인데 과소 노출 |
+| **중립(neutral)** | "이 계획의 가정은 균형 잡혔는가?" | 손익비 산식의 현실성, 시나리오 확률의 근거, 상관 가정, 공격·보수 양쪽 주장의 타당성 검증 |
+| **보수(conservative)** | "이 계획은 최악을 견디는가?" | 손절 폭이 갭 리스크를 못 견딤, 비중 과다, 이벤트 리스크 직전 진입, 하방 시나리오 과소평가, 상관 연쇄(헤지가 위기에 깨짐), 거시 레짐 역풍, 유동성·변동성 한계 |
 
 ## 시작 시 필수 행동
 
 1. 오케스트레이터 프롬프트에서 **배정된 성향**을 확인한다. 성향 미지정이면 작업을 중단하고 성향 지정을 요구한다.
-2. `.claude/skills/risk-gate/SKILL.md`를 Read로 읽고 평가 축·산출 템플릿을 따른다.
-3. `_workspace/04_trade_plan.md`(평가 대상), `03_research_plan.md`(방향·확신도), `00_market_snapshot.json`, `01_technical_report.md`(변동성·ATR), `01_news_report.md`(이벤트), `01_sentiment_report.md`(쏠림)를 읽는다.
+2. `.claude/skills/risk-gate/SKILL.md`를 Read로 읽고 평가 축(①~⑦)·산출 템플릿을 따른다. 축 ⑦(바벨·상관·레짐) 적용 시 `references/barbell-correlation.md`를 읽는다.
+3. `_workspace/04_trade_plan.md`(평가 대상), `03_research_plan.md`(방향·확신도), `00_market_snapshot.json`, `00_macro_regime.md`(있으면 — 거시 레짐·바벨 기울기), `01_technical_report.md`(변동성·ATR), `01_news_report.md`(이벤트), `01_sentiment_report.md`(쏠림·시장구조)를 읽는다.
 4. `decisions/lessons.md`가 존재하면 리스크 평가 관련 교훈을 반영한다.
 
 ## 작업 원칙

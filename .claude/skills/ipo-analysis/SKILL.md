@@ -9,7 +9,7 @@ description: IPO(신규상장) 투자 분석 하네스 오케스트레이터 —
 
 **왜 IPO 전용인가:** IPO에는 거래 이력·과거 멀티플·시장 가격이 없다. 결론은 공모 구조·첫 거래 가격발견·유통물량·안정조작·락업·지수편입·**한국 투자자 실제 접근성**이 지배한다. 그래서 스냅샷(`ipo-snapshot`)과 진입 전략(`ipo-timing`)이 2차 시장 버전과 다르고, 분석 스킬들도 IPO 모드로 분기한다.
 
-**실행 모드: 서브 에이전트 (병렬 팬아웃 + 파이프라인).** Bull과 Bear는 서로의 보고서를 **봐서는 안 되므로**(적대적 독립성), 파일로만 데이터를 주고받는다. 모든 에이전트는 `model: "opus"`로 호출한다.
+**실행 모드: 서브 에이전트 (병렬 팬아웃 + 파이프라인).** Bull과 Bear는 서로의 보고서를 **봐서는 안 되므로**(적대적 독립성), 파일로만 데이터를 주고받는다. 계층별 라우팅: 저부하=sonnet, 생성·판단 코어=opus 명시.
 
 ## Phase 0: 컨텍스트 확인
 
@@ -49,7 +49,8 @@ description: IPO(신규상장) 투자 분석 하네스 오케스트레이터 —
 **data-collector를 단독 호출**한다. Bull/Bear보다 먼저 실행해 공통 스냅샷을 완성한다.
 
 ```
-Agent(subagent_type="data-collector", model="opus",
+# 저부하(데이터 수집) → sonnet
+Agent(subagent_type="data-collector", model="sonnet",
       prompt="_workspace_ipo/00_orchestrator_input.md를 읽고, .claude/skills/ipo-snapshot/SKILL.md 방법론으로 _workspace_ipo/00_ipo_snapshot.json을 작성하라. 이것은 IPO(상장 전/직후) 분석이다 — 거래가가 아니라 공모가·발행신주·상장후 주식수·시총·free_float(4필드 분리)·락업·지수편입·세그먼트 재무를 고정하라. EDGAR 최신 문서(424B>S-1/A>FWP) 우선, 상장 전 가격값은 source_status:preliminary. 저장 직전 self_check(시총=공모가×주식수, 조달=공모가×신주, free_float 재계산·갭)를 직접 계산해 채워라. 투자 판단·전망은 넣지 마라.")
 ```
 
@@ -129,15 +130,23 @@ Agent(subagent_type="verdict-reviewer", model="opus",
 2. **의사결정 저널 기록:** `decisions/journal.md`에 이번 판정을 1건 append한다(파일 상단의 항목 포맷 준수 — 판정·확신도(정의)·공모 기준·크럭스·핵심 논거·채택 진입 계획(게이트/비중/잠재 손실)·가설훼손 체크포인트·잔여 리스크·`결과: (미기록 — 복기 시 갱신)`). **기존 항목은 수정 금지(append-only)** — 후향적 정당화를 막는 장치다.
 3. `_workspace_ipo/`는 **삭제하지 않고 보존**(작업 원본·감사 추적·부분 재실행용). `00_ipo_snapshot.json`도 보존.
 4. 사용자 요약 보고: 최종 판정(BUY/HOLD/SELL + 확신도 + 정의), 핵심 강세/약세 1줄씩, 팩트체크가 바꾼 것(특히 free_float 갭 규명 결과), **판결 검토 결과**(적정성 + 재작성 여부 + 잔여 지적), **IPO 진입전략 핵심**(실행 게이트 결과 + 성향별 1차 구간 유효성 + 잠재 손실/진입 보류 게이트 + 가설훼손 요지 + 전략 검토 결과), 저널 기록 완료, 산출물 경로.
-5. **팟캐스트 (반드시 묻기 — 생략 금지):** 요약 보고 직후, 판정이 무엇이든 AskUserQuestion으로 묻는다 — "이번 IPO 분석으로 투자 팟캐스트를 만들까요?" 옵션: **① 대본 + 오디오(MP3)** (NotebookLM 로그인 필요, 생성 수 분~십수 분 소요) / **② 대본만** / **③ 만들지 않음**. ③이면 아무것도 만들지 않고 6으로.
+5. **쉬운 해설판 (표준 산출물 — 입문자용, 생략 금지):** 요약 보고 후 report-explainer를 호출해 IPO 판정을 투자 입문자용 companion 문서로 충실히 옮긴다. 전문 리포트 7종은 그대로 보존되고, 이건 그 위에 얹는 쉬운 번역본이다.
+   ```
+   # 충실 번역(결론·수치 보존이 생명, 저부하 산출) → sonnet
+   Agent(subagent_type="report-explainer", model="sonnet",
+         prompt="IPO 하네스 해설 모드. _workspace_ipo/03_judge_verdict.md(필수)·03c_ipo_entry_plan.md·02_factchecker_annotations.md를 읽고, plain-language 스킬로 _workspace_ipo/05_plain_explanation.md를 작성하라. BUY/HOLD/SELL·확신도·공모가 대비 가치·진입 구간·잠재 손실을 한 글자도 왜곡하지 말고, 전문용어(공모가·free float·락업·따상·수요예측 등) 첫 등장 풀이 + 정확한 비유 + 행동 가이드(청약/상장일·진입/철회 트리거) + 용어 풀이 구조로. 출력 전 충실성 자가 점검 필수.")
+   ```
+   완성본을 `reports/{회사}_IPO_{YYYY-MM-DD}/쉬운해설_{회사}.md`로 복사. 실패 시 1회 재시도, 재실패면 해설판 없이 진행(전문 리포트는 보존)하고 보고에 누락 명시.
+6. **팟캐스트 (반드시 묻기 — 생략 금지):** 해설판 생성 후, 판정이 무엇이든 AskUserQuestion으로 묻는다 — "이번 IPO 분석으로 투자 팟캐스트를 만들까요?" 옵션: **① 대본 + 오디오(MP3)** (NotebookLM 로그인 필요, 생성 수 분~십수 분 소요) / **② 대본만** / **③ 만들지 않음**. ③이면 아무것도 만들지 않고 7로.
    - **대본 (①·② 공통):**
      ```
-     Agent(subagent_type="podcast-producer", model="opus",
+     # 선택형 저부하 산출 → sonnet
+     Agent(subagent_type="podcast-producer", model="sonnet",
            prompt="IPO 하네스 대본 모드. _workspace_ipo/03_judge_verdict.md(필수)·03c_ipo_entry_plan.md를 읽고(디테일은 01_bull_report.md/01_bear_report.md), podcast-script 스킬로 _workspace_ipo/04_podcast_script.md를 작성하라. BUY/HOLD/SELL·확신도·진입 전략 수치 왜곡 금지. 하단에 NotebookLM 생성 지침 섹션 필수.")
      ```
      완성본을 `reports/{회사}_IPO_{YYYY-MM-DD}/팟캐스트대본_{회사}.md`로 복사.
    - **오디오 (① 선택 시):** notebooklm-audio 스킬을 따른다 — `--check-only` 사전 점검(코드 2=미인증·3=미설치면 오디오 생략 + 설정 안내, 대본은 보존). 통과 시 번들 스크립트로 생성: `--out "reports/{회사}_IPO_{YYYY-MM-DD}/팟캐스트_{회사}.mp3" --source _workspace_ipo/03_judge_verdict.md --source _workspace_ipo/04_podcast_script.md --format debate --language ko --instructions "{대본의 NotebookLM 생성 지침을 그대로}"`. 실패 시 1회 재시도, 재실패면 대본만 산출물로 보고.
-6. Phase 7 진화: "결과나 팀 구성에서 고치고 싶은 점이 있나요?"를 한 번 묻는다(강요 금지).
+7. Phase 7 진화: "결과나 팀 구성에서 고치고 싶은 점이 있나요?"를 한 번 묻는다(강요 금지).
 
 ## Phase R: 복기 모드 (별도 진입 — 학습 루프)
 
@@ -168,6 +177,7 @@ Agent(subagent_type="verdict-reviewer", model="opus",
 | 3.9 | verdict-reviewer (Part B) | `03d_execution_review.md` | 오케스트레이터(재작성 루프), 사용자 |
 | 6 | 오케스트레이터 | `decisions/journal.md` (append) | Phase 0 pending 결산, Phase R 복기 |
 | R | verdict-reviewer (복기) | `journal.md` 결과 줄 갱신 + `decisions/lessons.md` (append) | 차기 실행의 전 판단 에이전트 |
+| 6 해설(표준 — 입문자용) | report-explainer | `05_plain_explanation.md` → `reports/.../쉬운해설_{회사}.md` | 사용자 |
 | 6 팟캐스트(선택 — 사용자 동의 시만) | podcast-producer | `04_podcast_script.md` → `reports/.../팟캐스트대본·팟캐스트.mp3` | 사용자, notebooklm-audio 스킬 |
 
 **학습 루프:** `decisions/lessons.md`는 모든 판단 에이전트(bull/bear/judge/execution/verdict-reviewer)가 시작 시 자기 `적용 대상` 교훈만 골라 읽는다. 교훈과 정면 충돌하는 판단·계획은 정당화를 명시해야 한다(검토관이 점검).
@@ -182,7 +192,7 @@ Agent(subagent_type="verdict-reviewer", model="opus",
 
 ## 테스트 시나리오
 
-**정상 흐름:** "SpaceX 상장 분석해줘" → Phase 0(초기) → 입력 기록(상장일·시드) → Phase 1.5 data-collector가 `00_ipo_snapshot.json` 생성(self_check PASS) → Phase 1.6 audit 통과 → Bull∥Bear(IPO 모드, 스냅샷 공유) → 팩트체크(EDGAR 최신, free_float 갭 규명) → 심판(예: HOLD 60%, "공모가 대비 옵션프리미엄 지배") → Phase 4.5 판결검토(재작성 불필요) → Phase 4.7 진입전략(실행 게이트 + 성향별 4단계 분할 + 가설훼손) → Phase 4.8 전략검토(재작성 불필요) → reports/에 7종 + 요약 보고.
+**정상 흐름:** "SpaceX 상장 분석해줘" → Phase 0(초기) → 입력 기록(상장일·시드) → Phase 1.5 data-collector가 `00_ipo_snapshot.json` 생성(self_check PASS) → Phase 1.6 audit 통과 → Bull∥Bear(IPO 모드, 스냅샷 공유) → 팩트체크(EDGAR 최신, free_float 갭 규명) → 심판(예: HOLD 60%, "공모가 대비 옵션프리미엄 지배") → Phase 4.5 판결검토(재작성 불필요) → Phase 4.7 진입전략(실행 게이트 + 성향별 4단계 분할 + 가설훼손) → Phase 4.8 전략검토(재작성 불필요) → reports/에 7종 + 요약 보고 → 쉬운 해설판 생성(입문자용 companion) → 팟캐스트 묻기.
 
 **스냅샷 하드 실패 흐름:** data-collector가 시총을 공모가×주식수와 다르게 적어 self_check FAIL → Phase 1.6이 ⛔하드 실패로 재호출 → 산식 일치시켜 PASS → 진행.
 

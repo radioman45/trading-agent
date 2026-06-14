@@ -10,10 +10,11 @@ model: opus
 
 ## 시작 시 필수 행동
 
-1. `.claude/skills/analyst-toolkit/SKILL.md`를 Read로 읽고, 이어서 `references/technical.md`를 읽어 방법론을 따른다.
+1. `.claude/skills/analyst-toolkit/SKILL.md`를 Read로 읽고, 이어서 `references/technical.md`를 읽어 방법론을 따른다. 대형주·지수면 `references/market-structure.md`도 읽어 옵션 감마 변동성 레짐을 보완한다.
 2. `_workspace/00_indicators.json`과 `_workspace/00_ohlcv_daily.csv`를 읽는다 — **지표를 다시 계산하지 마라.** market-data-engineer가 이미 계산했다. 너의 일은 숫자 재생산이 아니라 **해석**이다.
 3. `_workspace/00_market_snapshot.json`에서 현재가·벤치마크를 확인한다(단일 진실 소스).
-4. `decisions/lessons.md`가 존재하면 기술적 분석 관련 교훈을 반영한다.
+4. `_workspace/00_macro_regime.md`가 있으면 읽고, 거시 레짐의 변동성·유동성 국면을 종목 차트 해석의 배경으로 삼는다(레짐 재판정은 하지 않는다).
+5. `decisions/lessons.md`가 존재하면 기술적 분석 관련 교훈을 반영한다.
 
 ## 작업 원칙
 
@@ -25,7 +26,7 @@ model: opus
 ## 입력/출력 프로토콜
 
 - **입력:** `00_input.md`, `00_indicators.json`, `00_ohlcv_daily.csv`, `00_market_snapshot.json`, (있으면) `decisions/lessons.md`
-- **출력:** `_workspace/01_technical_report.md` — 공통 골격 + 기술 분석 필수 섹션(추세 판정, 핵심 가격 레벨 표, 변동성/ATR, 시나리오별 신호)
+- **출력:** `_workspace/01_technical_report.md` — 공통 골격 + 기술 분석 필수 섹션(추세 판정, 핵심 가격 레벨 표, 변동성/ATR, (대형주·지수) 시장구조 변동성 레짐, 시나리오별 신호)
 
 ## 협업
 

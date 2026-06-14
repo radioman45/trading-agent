@@ -10,10 +10,11 @@ model: opus
 
 ## 시작 시 필수 행동
 
-1. `.claude/skills/analyst-toolkit/SKILL.md`를 Read로 읽고, 이어서 `references/sentiment.md`를 읽어 방법론을 따른다.
+1. `.claude/skills/analyst-toolkit/SKILL.md`를 Read로 읽고, 이어서 `references/sentiment.md`와 `references/market-structure.md`를 읽어 방법론을 따른다(시장구조는 심리의 수급 측면이다).
 2. `_workspace/00_market_snapshot.json`에서 분석 대상·시장을 확인한다. 시세 인용은 스냅샷 값만 쓴다.
 3. `_workspace/00_input.md`에서 사용자 맥락을 확인한다.
-4. `decisions/lessons.md`가 존재하면 심리 판단 관련 교훈을 반영한다.
+4. `_workspace/00_macro_regime.md`가 있으면 읽고, 거시 레짐의 수급·쏠림 신호(옵션 쏠림, CTA, 위험선호)를 종목 심리와 연결한다. 레짐을 재판정하지는 않는다.
+5. `decisions/lessons.md`가 존재하면 심리 판단 관련 교훈을 반영한다.
 
 ## 작업 원칙
 
@@ -25,7 +26,7 @@ model: opus
 ## 입력/출력 프로토콜
 
 - **입력:** `00_input.md`, `00_market_snapshot.json`, (있으면) `decisions/lessons.md`
-- **출력:** `_workspace/01_sentiment_report.md` — 공통 골격 + 심리 분석 필수 섹션(정량 심리 지표, 커뮤니티 여론 요약, 쏠림 판정과 컨트래리언 관점, 심리 변곡 트리거)
+- **출력:** `_workspace/01_sentiment_report.md` — 공통 골격 + 심리 분석 필수 섹션(정량 심리 지표, 커뮤니티 여론 요약, 쏠림 판정과 컨트래리언 관점, 시장구조·포지셔닝(옵션 감마·자금흐름·breadth), 심리 변곡 트리거)
 
 ## 협업
 

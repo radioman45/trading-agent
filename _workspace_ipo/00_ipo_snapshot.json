@@ -1,276 +1,201 @@
 {
-  "schema_version": "ipo-1.0-secondary",
-  "snapshot_type": "secondary_market",
-  "as_of": "2026-06-10",
-  "company": "삼성전자 (Samsung Electronics Co., Ltd.)",
-  "ticker": "005930.KS",
-  "ticker_preferred": "005935.KS",
-  "market": "KR",
-  "exchange": "KRX (KOSPI)",
-  "reporting_currency": "KRW",
-  "note": "신규상장(IPO) 아님 — 2차 시장 상장사. IPO 전용 필드(공모가·발행신주·락업·greenshoe·free_float 4필드·지수편입)는 적용하지 않음. SSOT 원칙(단일 진실 소스·출처/시점 명시·self_check·투자판단 배제)만 적용.",
+  "schema_version": "ipo-1.0",
+  "as_of": "2026-06-14",
+  "company": "Space Exploration Technologies Corp. (SpaceX)",
+  "ticker": "SPCX",
+  "market": "US",
+  "exchange": "Nasdaq / Nasdaq Texas",
+  "reporting_currency": "USD",
+  "analysis_mode": "post-listing (거래 데이터 존재). 상장(거래개시) 2026-06-12(금). 분석 시점 2026-06-14(일) — 6/12 종가가 최신 거래가(주말 휴장). 진입 분석 기준가는 공모가 $135가 아니라 현재가 $160.95(6/12 종가).",
+  "share_class_structure": "Dual-class (Class A 거래; Class B 1주 10의결권 super-voting, 인사이더 보유). Musk 보유 ~49% 지분으로 공모 후에도 지배적 의결권 유지. 인사이더 합계 ~53.4% 지분. 2026 Stock Split·Class C Reclassification·Preferred Conversion(우선주 보통주 전환) 상장 전 완료 반영.",
 
-  "price": {
-    "common_005930": {
-      "value": 322000, "currency": "KRW", "as_of": "2026-06-09", "price_type": "종가(전일종가)",
-      "source": "FnGuide Company Guide / Daum 금융", "source_doc": "FnGuide Snapshot (as of 2026-06-09)", "source_status": "final", "confidence": "high"
-    },
-    "preferred_005935": {
-      "value": 203500, "currency": "KRW", "as_of": "2026-06-09", "price_type": "종가/직전가 근사",
-      "source": "Investing.com / alphasquare", "source_doc": "Investing.com 005935 (as of 2026-06-09)", "source_status": "final", "confidence": "medium"
-    },
-    "common_52w_high": { "value": 360500, "currency": "KRW", "as_of": "2026-06-09", "source": "FnGuide", "source_doc": "FnGuide Snapshot", "source_status": "final", "confidence": "medium" },
-    "common_52w_low":  { "value": 57200,  "currency": "KRW", "as_of": "2026-06-09", "source": "FnGuide", "source_doc": "FnGuide Snapshot", "source_status": "final", "confidence": "medium" },
-    "preferred_52w_high": { "value": 243500, "currency": "KRW", "as_of": "2026-06-09", "source": "Investing.com", "source_doc": "Investing.com 005935", "source_status": "final", "confidence": "medium" },
-    "preferred_52w_low":  { "value": 46800,  "currency": "KRW", "as_of": "2026-06-09", "source": "Investing.com", "source_doc": "Investing.com 005935", "source_status": "final", "confidence": "medium" }
+  "listing": {
+    "pricing_date":  { "value": "2026-06-11", "as_of": "2026-06-11", "source": "FWP (pricing) + S-1/A effective", "source_doc": "FWP 0001628280-26-042466 (2026-06-11)", "source_status": "final", "confidence": "high" },
+    "trading_start": { "value": "2026-06-12", "as_of": "2026-06-12", "source": "Nasdaq 상장(거래개시) — CNBC/CNN/NPR 6/12 확인", "source_doc": "FWP + 언론(CNBC/CNN/NPR 2026-06-12)", "source_status": "final", "confidence": "high" },
+    "closing_date":  { "value": "2026-06-15", "as_of": "2026-06-11", "source": "FWP (공모 결제일)", "source_doc": "FWP 0001628280-26-042466", "source_status": "final", "confidence": "high" },
+    "ipo_price":          { "value": 135, "currency": "USD", "as_of": "2026-06-11", "source": "FWP (Price to Public, 확정 공모가)", "source_doc": "FWP 0001628280-26-042466 (2026-06-11)", "source_status": "final", "confidence": "high" },
+    "shares_offered_new": { "value": 555555555, "currency": null, "as_of": "2026-06-11", "source": "FWP (Shares Offered, 100% Primary)", "source_doc": "FWP 0001628280-26-042466", "source_status": "final", "confidence": "high" },
+    "primary_pct":        { "value": 100, "currency": null, "as_of": "2026-06-11", "source": "FWP (100% Primary, 전량 신주)", "source_doc": "FWP 0001628280-26-042466", "source_status": "final", "confidence": "high" },
+    "greenshoe":          { "value": 83333333, "currency": null, "as_of": "2026-06-11", "source": "FWP (초과배정/Greenshoe, 100% Primary)", "source_doc": "FWP 0001628280-26-042466", "source_status": "final", "confidence": "high" },
+    "offering_size":      { "value": 74999999925, "currency": "USD", "as_of": "2026-06-11", "source": "FWP (Size = 135 × 555,555,555)", "source_doc": "FWP 0001628280-26-042466", "source_status": "final", "confidence": "high" },
+    "gross_proceeds_est": { "value": 74999999925, "currency": "USD", "as_of": "2026-06-11", "source": "ipo_price × shares_offered_new (base, 초과배정 전). 초과배정 전량 행사 시 ~$86.25B", "source_doc": "derived from FWP", "source_status": "final", "confidence": "high" },
+    "gross_proceeds_with_greenshoe": { "value": 86249999880, "currency": "USD", "as_of": "2026-06-11", "source": "135 × (555,555,555 + 83,333,333)", "source_doc": "derived from FWP", "source_status": "final", "confidence": "high" },
+    "underwriters_lead":  { "value": ["Goldman Sachs", "Morgan Stanley", "BofA Securities", "Citigroup", "J.P. Morgan", "Barclays", "Deutsche Bank", "RBC", "UBS", "Wells Fargo"], "as_of": "2026-06-11", "source": "FWP (Joint Book-Running Managers)", "source_doc": "FWP 0001628280-26-042466", "source_status": "final", "confidence": "high" },
+    "retail_allocation_note": { "value": "개인투자자 배정 비중이 통상(5~10%)보다 높았다는 보도. 첫날 SPCX 개인 거래대금 $453M(당일 전체 개인 단일종목 거래대금의 ~4%)로 개인 수요 강함이 확인됨. 정확한 배정 비율은 1차 공시 미직접확인.", "as_of": "2026-06-12", "source": "CNBC/Kiplinger/Reuters 보도", "source_doc": "press", "source_status": "press", "confidence": "low" }
   },
 
-  "shares": {
-    "common_issued": {
-      "value": 5969782550, "currency": null, "as_of": "2026-03-31",
-      "source": "삼성전자 IR 상장현황 / DART 분기보고서(제58기 1분기)", "source_doc": "samsung.com/sec/ir listing-info", "source_status": "final", "confidence": "high"
-    },
-    "preferred_issued": {
-      "value": 822886700, "currency": null, "as_of": "2026-03-31",
-      "source": "삼성전자 IR 상장현황 / DART 분기보고서", "source_doc": "samsung.com/sec/ir listing-info", "source_status": "final", "confidence": "high"
-    },
-    "treasury_common": {
-      "value": 82086705, "currency": null, "as_of": "2026-06-09",
-      "source": "FnGuide Company Guide", "source_doc": "FnGuide Snapshot", "source_status": "final", "confidence": "low",
-      "note": "FnGuide 표기 자사주(보통주). DART 자기주식 상세 미교차 — 추가 신규 자사주 매입(2026-05 보도, 성과급용 ~21조 추정)으로 변동 가능. 1차 출처 교차 필요."
-    },
-    "common_listed_floating_fnguide": {
-      "value": 5846278608, "currency": null, "as_of": "2026-06-09",
-      "source": "FnGuide", "source_doc": "FnGuide Snapshot", "source_status": "final", "confidence": "medium",
-      "note": "FnGuide의 '발행주식수' 표기값 — 발행총수(5,969,782,550)에서 자사주 등 차감한 유통/상장 기준으로 추정. 시총 산식 분기의 원인(아래 conflicts 참조)."
-    }
+  "post_listing_trading": {
+    "open_price":           { "value": 150, "currency": "USD", "as_of": "2026-06-12", "source": "시초가 $150 (공모가 +11%) — CNBC/NPR/Yahoo 6/12", "source_doc": "press (CNBC/NPR 2026-06-12)", "source_status": "final", "confidence": "high" },
+    "intraday_high":        { "value": 176.52, "currency": "USD", "as_of": "2026-06-12", "source": "장중 고가 $176.52 — BusinessToday/MEXC 6/12", "source_doc": "press", "source_status": "final", "confidence": "high" },
+    "close_price":          { "value": 160.95, "currency": "USD", "as_of": "2026-06-12", "source": "6/12 종가 $160.95 (공모가 대비 +19.2%) — CNBC/NPR/NBC. 주말 휴장으로 분석 시점(6/14)의 최신가. 진입 분석 기준가.", "source_doc": "press (CNBC/NPR/NBC 2026-06-12)", "source_status": "final", "confidence": "high" },
+    "current_price":        { "value": 160.95, "currency": "USD", "as_of": "2026-06-14", "source": "= 6/12 종가(주말 휴장, 거래 미발생). 하류 진입 분석의 현재가 기준.", "source_doc": "derived (last trade)", "source_status": "final", "confidence": "high" },
+    "first_day_return_pct": { "value": 19.2, "as_of": "2026-06-12", "source": "(160.95-135)/135 = +19.22% — 보도 '+19%'와 정합", "source_doc": "derived", "source_status": "final", "confidence": "high" },
+    "first_day_pop_vs_open_pct": { "value": 7.3, "as_of": "2026-06-12", "source": "시초가 $150 대비 종가 $160.95 = +7.3%. 시초가는 공모가 +11%(IPO pop).", "source_doc": "derived", "source_status": "final", "confidence": "high" },
+    "retail_turnover_first_day": { "value": 453000000, "currency": "USD", "as_of": "2026-06-12", "source": "첫날 SPCX 개인 거래대금 ~$453M (당일 전체 개인 단일종목 거래대금의 ~4%) — Reuters/보도. 전체 거래량/회전율은 미확보.", "source_doc": "press", "source_status": "press", "confidence": "low" },
+    "close_price_alt_note": { "value": "종가 보도 편차: CNBC/NPR/NBC $160.95(+19.2%) vs 일부($161.11, +19.34%). 입력 지정값 $160.95를 채택, $161.11은 alternative(약 +0.1% 차, 시총 영향 미미).", "as_of": "2026-06-12", "source": "보도 교차", "source_doc": "press", "source_status": "press", "confidence": "medium" }
   },
 
-  "market_cap": {
-    "common_issued_basis": {
-      "value": 1922269981100000, "currency": "KRW", "as_of": "2026-06-09",
-      "formula": "322,000 × 5,969,782,550 (보통주 발행총수 기준)",
-      "source": "derived", "source_doc": "derived", "source_status": "final", "confidence": "high"
-    },
-    "common_fnguide_reported": {
-      "value": 1882501711776000, "currency": "KRW", "as_of": "2026-06-09",
-      "formula": "322,000 × 5,846,278,608 (FnGuide 발행주식수 표기 기준) ≈ FnGuide 보고 시총 18,825,017억원",
-      "source": "FnGuide", "source_doc": "FnGuide Snapshot", "source_status": "final", "confidence": "medium",
-      "note": "FnGuide 보고 시총은 자사주 차감 후 주식수 기준이라 발행총수 기준보다 약 39.8조원 낮음."
-    },
-    "preferred_basis": {
-      "value": 167457443450000, "currency": "KRW", "as_of": "2026-06-09",
-      "formula": "203,500 × 822,886,700 (우선주 발행총수 기준)",
-      "source": "derived", "source_doc": "derived", "source_status": "final", "confidence": "medium"
-    },
-    "combined_common_plus_preferred": {
-      "value": 2089727424550000, "currency": "KRW", "as_of": "2026-06-09",
-      "formula": "1,922,269,981,100,000 (보통주 발행총수 기준) + 167,457,443,450,000 (우선주)",
-      "source": "derived", "source_doc": "derived", "source_status": "final", "confidence": "medium"
-    }
-  },
-
-  "fx": {
-    "USDKRW": {
-      "value": 1526.99, "currency": "KRW", "as_of": "2026-06-08",
-      "source": "Investing.com USD/KRW historical", "source_doc": "Investing.com USDKRW", "source_status": "final", "confidence": "medium",
-      "note": "2026-06-08 값. 2026-06-10 정확한 종가/매매기준율은 1차 출처 미확보. 2025-2026 원화 고환율 국면(1,500원대) 반영."
-    }
-  },
-
-  "financials": {
-    "annual_FY2025": {
-      "period": "2025-01-01 ~ 2025-12-31 (제57기, 연결)",
-      "revenue":          { "value": 333605900000000, "currency": "KRW", "as_of": "2025-12-31", "source": "삼성전자 실적발표/DART 사업보고서", "source_doc": "2025 4Q 실적/사업보고서", "source_status": "final", "confidence": "high", "note": "333조6,059억원" },
-      "operating_income": { "value": 43601100000000,  "currency": "KRW", "as_of": "2025-12-31", "source": "삼성전자 실적발표", "source_doc": "2025 4Q 실적", "source_status": "final", "confidence": "high", "note": "43조6,011억원, 전년비 +33.2%" },
-      "net_income":       { "value": 45206810000000,  "currency": "KRW", "as_of": "2025-12-31", "source": "삼성전자 실적발표/DART", "source_doc": "2025 연결재무제표", "source_status": "final", "confidence": "high", "note": "45조2,068억원, 전년비 +31.2%. EPS(보통주) 6,605원" },
-      "operating_cash_flow": { "value": 85315100000000, "currency": "KRW", "as_of": "2025-12-31", "source": "보도/연결현금흐름표", "source_doc": "재무 분석 보도", "source_status": "press", "confidence": "low", "note": "보도 인용 85.3조원 — DART 연결현금흐름표 직접 교차 미완. confidence 하향." },
-      "capex":            { "value": 50300000000000,  "currency": "KRW", "as_of": "2025-12-31", "source": "삼성전자 IR/실적", "source_doc": "2025 시설투자 집계", "source_status": "press", "confidence": "medium", "note": "반도체 47.5조 + 디스플레이 2.8조 집행 기준 합산 ≈ 50.3조원. 전사 합계는 일부 항목 추가 가능." }
-    },
-    "quarter_1Q2026": {
-      "period": "2026-01-01 ~ 2026-03-31 (제58기 1분기, 연결, 확정 기준)",
-      "revenue":          { "value": 133900000000000, "currency": "KRW", "as_of": "2026-03-31", "source": "삼성전자 2026 1분기 실적발표", "source_doc": "Samsung Newsroom 2026 1Q", "source_status": "final", "confidence": "medium", "note": "133.9조원, 전년동기비 +68.1% (보도 기준)" },
-      "operating_income": { "value": 57200000000000,  "currency": "KRW", "as_of": "2026-03-31", "source": "삼성전자 2026 1분기 실적발표", "source_doc": "Samsung Newsroom 2026 1Q", "source_status": "final", "confidence": "medium", "note": "57.2조원, 전년동기비 +755%, 영업이익률 42.8% (보도 기준). 비정상적 급증 — DART 분기보고서 원문 교차 권장." },
-      "net_income":       { "value": null, "currency": "KRW", "as_of": "2026-03-31", "source": null, "source_doc": null, "source_status": null, "confidence": "unavailable", "note": "1Q26 연결 당기순이익 1차 출처 미확보." },
-      "operating_cash_flow": { "value": null, "currency": "KRW", "as_of": "2026-03-31", "source": null, "source_doc": null, "source_status": null, "confidence": "unavailable" },
-      "capex":            { "value": null, "currency": "KRW", "as_of": "2026-03-31", "source": null, "source_doc": null, "source_status": null, "confidence": "unavailable" }
-    },
-    "segments_FY2025": {
-      "basis": "2025 연간(연결), 부문 매출에는 부문간 내부거래 포함 → 합계가 연결 매출 초과",
-      "DS": {
-        "revenue":          { "value": 130100000000000, "currency": "KRW", "as_of": "2025-12-31", "source": "보도(연간 부문)", "source_doc": "ZDNet/실적 보도", "source_status": "press", "confidence": "medium", "note": "DS 연간 매출 130.1조원 (2024 111.1조→130.1조)" },
-        "operating_income": { "value": 24900000000000,  "currency": "KRW", "as_of": "2025-12-31", "source": "보도(연간 부문)", "source_doc": "실적 보도", "source_status": "press", "confidence": "medium", "note": "DS 연간 영업익 24.9조원 (2024 15.1조 대비 +65%)" }
-      },
-      "DX": {
-        "revenue":          { "value": 188000000000000, "currency": "KRW", "as_of": "2025-12-31", "source": "보도(연간 부문)", "source_doc": "실적 보도", "source_status": "press", "confidence": "medium", "note": "DX 연간 매출 약 188조원" },
-        "operating_income": { "value": 12900000000000,  "currency": "KRW", "as_of": "2025-12-31", "source": "보도(연간 부문)", "source_doc": "실적 보도", "source_status": "press", "confidence": "medium", "note": "DX 연간 영업익 12.9조원" }
-      },
-      "SDC": {
-        "revenue":          { "value": 34382600000000, "currency": "KRW", "as_of": "2025-12-31", "source": "보도(연간 부문)", "source_doc": "실적 보도", "source_status": "press", "confidence": "medium", "note": "디스플레이 매출 34조3,826억원" },
-        "operating_income": { "value": 5953000000000,  "currency": "KRW", "as_of": "2025-12-31", "source": "보도(연간 부문)", "source_doc": "실적 보도", "source_status": "press", "confidence": "medium", "note": "디스플레이 영업익 5조9,530억원" }
-      },
-      "Harman": {
-        "revenue":          { "value": 13213700000000, "currency": "KRW", "as_of": "2025-12-31", "source": "보도(연간 부문)", "source_doc": "실적 보도", "source_status": "press", "confidence": "medium", "note": "Harman 매출 13조2,137억원" },
-        "operating_income": { "value": 880500000000,   "currency": "KRW", "as_of": "2025-12-31", "source": "보도(연간 부문)", "source_doc": "실적 보도", "source_status": "press", "confidence": "medium", "note": "Harman 영업익 8,805억원" }
-      },
-      "segments_1Q2026": {
-        "basis": "2026 1분기 부문 (보도 기준)",
-        "DS_revenue":          { "value": 81700000000000, "currency": "KRW", "as_of": "2026-03-31", "source": "삼성전자 2026 1Q 발표", "source_doc": "Samsung Newsroom", "source_status": "final", "confidence": "medium" },
-        "DS_operating_income": { "value": 53700000000000, "currency": "KRW", "as_of": "2026-03-31", "source": "삼성전자 2026 1Q 발표", "source_doc": "Samsung Newsroom", "source_status": "final", "confidence": "medium", "note": "DS 1Q26 영업익 53.7조원 — 비정상적 급증, 원문 교차 권장" },
-        "DX_revenue":          { "value": 52700000000000, "currency": "KRW", "as_of": "2026-03-31", "source": "삼성전자 2026 1Q 발표", "source_doc": "Samsung Newsroom", "source_status": "final", "confidence": "medium" },
-        "DX_operating_income": { "value": 3000000000000,  "currency": "KRW", "as_of": "2026-03-31", "source": "삼성전자 2026 1Q 발표", "source_doc": "Samsung Newsroom", "source_status": "final", "confidence": "medium" }
-      }
-    }
-  },
-
-  "balance": {
-    "cash_and_equivalents": { "value": null, "currency": "KRW", "as_of": "2026-03-31", "source": null, "source_doc": null, "source_status": null, "confidence": "unavailable", "note": "현금성자산 정확값 1차 출처 미확보. 삼성전자는 역사적으로 대규모 순현금(현금성 100조원대)." },
-    "total_debt":           { "value": null, "currency": "KRW", "as_of": "2026-03-31", "source": null, "source_doc": null, "source_status": null, "confidence": "unavailable", "note": "총차입금 정확값 미확보." },
-    "net_cash_status":      { "value": "순현금(net cash)", "currency": null, "as_of": "2026-03-31", "source": "삼성전자 재무구조 통념/IR", "source_doc": "정성 판단", "source_status": "estimate", "confidence": "medium", "note": "차입금 대비 현금성자산이 크게 우위인 순현금 기업 — 정확 수치는 unavailable, 상태만 표기." }
+  "post_ipo_shares": {
+    "class_a":             { "value": 7488063555, "currency": null, "as_of": "2026-06-11", "source": "S-1/A — '7,488,063,555 shares of Class A ... outstanding after this offering' (pre-offering 6,932,508,000 + 555,555,555 new)", "source_doc": "S-1/A 0001628280-26-040364 (2026-06-03)", "source_status": "final", "confidence": "high" },
+    "class_b":             { "value": 5602790410, "currency": null, "as_of": "2026-06-11", "source": "S-1/A — '5,602,790,410 shares of Class B ... outstanding'", "source_doc": "S-1/A 0001628280-26-040364 (2026-06-03)", "source_status": "final", "confidence": "high" },
+    "total":               { "value": 13090853965, "currency": null, "as_of": "2026-06-11", "source": "class_a + class_b (초과배정 전)", "source_doc": "S-1/A 0001628280-26-040364 (derived)", "source_status": "final", "confidence": "high" },
+    "total_with_greenshoe":{ "value": 13174187298, "currency": null, "as_of": "2026-06-11", "source": "total + greenshoe(83,333,333) 전량 행사 시", "source_doc": "derived from FWP + S-1/A", "source_status": "final", "confidence": "high" }
   },
 
   "valuation": {
-    "PER_FY2025_common_issued": {
-      "value": 42.52, "as_of": "2026-06-09",
-      "formula": "보통주 시총(발행총수 기준) 1,922.3조 ÷ FY2025 연결 순이익 45.21조",
-      "source": "derived", "source_doc": "derived", "source_status": "final", "confidence": "medium",
-      "note": "분모는 전사 연결 순이익, 분자는 보통주 시총만 — 우선주 미포함의 단순 근사. EPS 기준 PER(322,000/6,605=48.75)과 차이는 우선주 지분·EPS 계산 방식 차이."
-    },
-    "PER_FY2025_via_EPS": {
-      "value": 48.75, "as_of": "2026-06-09",
-      "formula": "주가 322,000 ÷ 보통주 EPS 6,605 (FY2025)",
-      "source": "derived", "source_doc": "FnGuide EPS / 실적 EPS", "source_status": "final", "confidence": "medium"
-    },
-    "PER_fnguide_reported": {
-      "value": 64.46, "as_of": "2026-06-09",
-      "formula": "FnGuide 보고치 (2025/12 기준)",
-      "source": "FnGuide", "source_doc": "FnGuide Snapshot", "source_status": "final", "confidence": "low",
-      "note": "FnGuide 보고 PER 64.46x는 derived 42.5~48.8x와 괴리 — FnGuide의 분모(지배주주 순이익 등) 또는 시점 차이 추정. conflicts 참조. TTM(1Q26 급증 반영)이면 더 낮아질 수 있음."
-    },
-    "PBR_via_BPS": {
-      "value": 5.03, "as_of": "2026-06-09",
-      "formula": "주가 322,000 ÷ BPS 63,976 (FnGuide)",
-      "source": "derived", "source_doc": "FnGuide BPS", "source_status": "final", "confidence": "medium",
-      "note": "BPS는 최근 분기 자본 기준 추정치. FnGuide 보고 PBR 8.31x와 괴리 — conflicts 참조."
-    },
-    "PBR_fnguide_reported": {
-      "value": 8.31, "as_of": "2026-06-09",
-      "source": "FnGuide", "source_doc": "FnGuide Snapshot", "source_status": "final", "confidence": "low",
-      "note": "FnGuide 보고 PBR 8.31x는 price/BPS(5.03)와 불일치 — BPS 시점/기준 차이 추정. 1차 자본 교차 필요."
-    },
-    "EV_EBITDA": {
-      "value": null, "as_of": "2026-06-09", "source": null, "source_doc": null, "source_status": null, "confidence": "unavailable",
-      "note": "EV = 시총 + 순부채(순현금이면 차감) − 정확한 현금성/차입금 미확보로 EV 미산출. EBITDA(영업이익+감가상각) 중 D&A 1차값 미확보. 두 입력 모두 unavailable이라 산출 보류."
-    }
+    "market_cap_at_ipo":         { "value": 1767265285275, "currency": "USD", "as_of": "2026-06-11", "source": "ipo_price × total (135 × 13,090,853,965). 공모가 기준 시총.", "source_doc": "derived", "source_status": "final", "confidence": "high" },
+    "market_cap_at_ipo_with_greenshoe": { "value": 1778515285230, "currency": "USD", "as_of": "2026-06-11", "source": "135 × 13,174,187,298 (초과배정 포함)", "source_doc": "derived", "source_status": "final", "confidence": "high" },
+    "market_cap_current":        { "value": 2106972945667, "currency": "USD", "as_of": "2026-06-12", "source": "close_price × total (160.95 × 13,090,853,965). 6/12 종가 기준 시총 ~$2.107T — 보도 '~$2.1T, 미국 6위'와 정합.", "source_doc": "derived", "source_status": "final", "confidence": "high" },
+    "market_cap_intraday_high":  { "value": 2310797541902, "currency": "USD", "as_of": "2026-06-12", "source": "176.52 × 13,090,853,965. 장중 고가 시 ~$2.31T — 보도 '한때 $2.3T 초과'와 정합.", "source_doc": "derived", "source_status": "final", "confidence": "medium" },
+    "ev_at_ipo_reported":        { "value": 1748000000000, "currency": "USD", "as_of": "2026-06-12", "source": "리포트 산출 EV $1.748T (시총 $1.75T + 차입금·금융리스 $22.9B − 현금·단기투자 $24.7B). EchoStar 스펙트럼·Cursor 거래 종결 가정 보도값 반영.", "source_doc": "raws/SpaceX_-_S-1_integrated.md p5", "source_status": "press", "confidence": "medium" },
+    "ev_sales_2025":             { "value": 88.9, "as_of": "2026-06-12", "source": "리포트: EV/Sales 88.9x (EV $1.748T / 매출 $18.7B, FY2025)", "source_doc": "raws p5", "source_status": "press", "confidence": "medium" },
+    "ev_ebitda_2025":            { "value": 425.1, "as_of": "2026-06-12", "source": "리포트: EV/EBITDA 425.1x (EBITDA $4.1B, FY2025)", "source_doc": "raws p5", "source_status": "press", "confidence": "medium" },
+    "ev_adj_ebitda_2025":        { "value": 265.5, "as_of": "2026-06-12", "source": "리포트: EV/adj.EBITDA 265.5x (adj.EBITDA $6.6B, FY2025)", "source_doc": "raws p5", "source_status": "press", "confidence": "medium" },
+    "valuation_caveat":          { "value": "위 EV/배수는 공모가 시총 ~$1.75T 기준(리포트). 현재가 $160.95(시총 ~$2.107T)에서는 EV·배수가 약 +19% 상향(EV/Sales ~106x 수준). 현재가 기준 리버스 밸류에이션은 Judge/Bull/Bear가 재산정. 배수는 보도/리포트 산출값(press)이며 1차 공시 직접 인용 아님.", "as_of": "2026-06-12", "source": "리포트/derived", "source_doc": "raws p5", "source_status": "press", "confidence": "medium" }
   },
 
-  "shareholder_return": {
-    "dividend_per_share_FY2025": {
-      "value": 1668, "currency": "KRW", "as_of": "2026-01", "source": "삼성전자 배당 공시/보도", "source_doc": "리드경제 외 / dividend.samsung.com", "source_status": "final", "confidence": "high",
-      "note": "FY2025 보통주 주당 배당 1,668원 (전년 1,446원 대비 +15.3%/+222원). 분기배당 4회 구조."
-    },
-    "dividend_yield": {
-      "value": 0.52, "currency": null, "as_of": "2026-06-09", "source": "FnGuide (DPS/주가)", "source_doc": "FnGuide Snapshot", "source_status": "final", "confidence": "medium",
-      "note": "배당수익률 0.52% (DPS 1,668 / 주가 322,000 근사). 주가 급등으로 수익률 하락."
-    },
-    "dividend_policy": {
-      "value": "분기 정기배당 + 잉여현금흐름 기반 주주환원 정책(역사적으로 FCF의 상당 부분 환원). 구체 정책기간 수치 1차 미교차.",
-      "as_of": "2026-06-10", "source": "삼성전자 IR 주주환원", "source_doc": "samsung.com/sec/ir shareholder-return", "source_status": "estimate", "confidence": "low"
-    },
-    "buyback": {
-      "value": "2026-05 성과급용 자사주 매입 추진 보도(추정 ~21조원 규모). 정식 공시 기준 매입/소각 규모·일정은 1차 미교차.",
-      "as_of": "2026-05-27", "source": "머니투데이 보도", "source_doc": "mt.co.kr 2026-05-27", "source_status": "press", "confidence": "low"
-    }
+  "free_float": {
+    "base_offering_float_pct":      { "value": 4.24, "as_of": "2026-06-11", "source": "shares_offered_new / total (555,555,555 / 13,090,853,965 = 4.2438%)", "source_doc": "derived", "source_status": "final", "confidence": "high" },
+    "with_overallotment_float_pct": { "value": 4.85, "as_of": "2026-06-11", "source": "(new + greenshoe) / (total + greenshoe) = 4.8496%", "source_doc": "derived", "source_status": "final", "confidence": "high" },
+    "reported_float_claim_pct":     { "value": 7, "as_of": "2026-06-03", "source": "Reuters 보도 (약 7%)", "source_doc": "Reuters/press", "source_status": "press", "confidence": "low" },
+    "reconciliation_required": true,
+    "reconciliation_note": "보도 7%(≈916.4M주)와 신주 only 4.24%(555.6M주)는 약 360.8M주 갭. 초과배정 포함해도 4.85%로 7%에 못 미침(2.76%p 갭). 7%의 분모·포함 물량(예: 기존주주 일부 등록주식, 조기 락업 해제분, 다른 free-float 정의)이 불명확 — fact-checker가 규명하거나 미해결로 표기. 리포트(raws p5)·MSCI 일부 자료는 '약 4.25%/4% float'로 신주 산식에 근접. 첫날 개인 거래대금 $453M(≈2.8M주 @$161)은 실제 가용 유통이 공모 신주(~555.6M) 수준임과 모순 없음.",
+    "msci_reported_float_pct": { "value": 4, "as_of": "2026-06-09", "source": "MSCI / TradingKey 보도 + 리포트 '4.25%' (신주 산식에 근접)", "source_doc": "press / raws p5", "source_status": "press", "confidence": "low" }
   },
 
-  "ownership": {
-    "foreign_ownership_pct": {
-      "value": 48.42, "as_of": "2026-05-20", "source": "보도(서울경제/SEN TV 등)", "source_doc": "sentv 2026-05-20", "source_status": "press", "confidence": "medium",
-      "note": "2026-05-20 기준 외국인 지분율 48.42% (연중 최저권, 연초 50% 상회에서 하락). FnGuide Snapshot은 47.68% 표기 — 시점 차이. 분석시점(06-10) 정확값은 변동 가능."
-    },
-    "foreign_ownership_pct_alt": {
-      "value": 47.68, "as_of": "2026-06-09", "source": "FnGuide Snapshot", "source_doc": "FnGuide", "source_status": "final", "confidence": "medium"
-    },
-    "largest_shareholder": {
-      "value": "삼성생명 외 특수관계인 합산 약 19.70% (삼성생명 8.61%, 삼성물산 5.05%, 이재용 등 포함). 국민연금 약 7.84% 별도.",
-      "as_of": "2025-12-31", "source": "FnGuide 지분분석 / wisereport", "source_doc": "FnGuide 지분분석", "source_status": "final", "confidence": "medium",
-      "note": "최대주주측(삼성생명 중심 특수관계인) 합산 19.70%. 이재용 개인 보통주 약 1.65%. 시점·합산범위에 따라 수치 차이 가능."
-    }
+  "lockup": {
+    "musk":            { "value": "366일 (this prospectus 일자 기준). Musk 보유 전량(~49% 지분) 대상, 조기 해제 조항 적용 없음(no early release).", "as_of": "2026-06-03", "source": "S-1/A — 'period of 366 days ... all of the shares owned by him ... not subject to any early release provisions'. 리포트 교차(머스크 ~49%, 366일).", "source_doc": "S-1/A 0001628280-26-040364 + raws p6", "source_status": "final", "confidence": "high" },
+    "select_insiders": { "value": "일부 주주(certain shareholders): 2027년 6월 30일 종료 분기 실적 발표 시점까지 제한, 그 사이 timed automatic releases(단계적 자동 해제) 적용.", "as_of": "2026-06-03", "source": "S-1/A — 'until the release of our financial results for the quarter ending June 30, 2027 ... subject to timed automatic releases'", "source_doc": "S-1/A 0001628280-26-040364", "source_status": "final", "confidence": "high" },
+    "other_shares":    { "value": "기타 주식(~35.8% 지분, 주로 VC·연기금 등 기관): 2026 2Q 실적 후~IPO+180일 사이 단계적 조기 해제. 보도: 첫 실적 후 인사이더 최대 20% 매도 가능, 주가가 공모가 대비 +30%를 10거래일 중 5일 유지 시 추가 10% 조기 해제, 이후 ~135일까지 7% 트랜치 단계, Q3 실적 후 28% 추가, 잔여는 표준 180일. 정확 트랜치는 Underwriting—Lock-up Agreements 기준.", "as_of": "2026-06-08", "source": "S-1/A Underwriting 섹션 + 리포트(raws p6) + Trefis/TradingKey 보도", "source_doc": "S-1/A 0001628280-26-040364 + raws p6 + press", "source_status": "preliminary", "confidence": "medium" },
+    "early_release_trigger_note": { "value": "현재가 $160.95는 공모가 $135 대비 +19.2%. 조기 해제 트리거(공모가 대비 +30% = $175.50를 10거래일 중 5일 유지)에 근접하나 미충족. 장중 고가 $176.52는 일시 +30.8% 도달했으나 종가 기준 미충족. 트리거 충족 시 추가 10% 조기 락업 해제 → 오버행 가속 가능.", "as_of": "2026-06-12", "source": "보도 트리거 조건 + 현재가 derived", "source_doc": "press + derived", "source_status": "press", "confidence": "medium" },
+    "aggregate_locked_over_1y": { "value": 7800000000, "currency": null, "as_of": "2026-06-03", "source": "S-1/A — '7.8 billion shares ... restricted for over one year (incl. 100% of Musk), ~60% of post-offering shares'. 리포트 교차(~60%).", "source_doc": "S-1/A 0001628280-26-040364 + raws p6", "source_status": "final", "confidence": "high" },
+    "aggregate_locked_over_1y_pct": { "value": 60, "as_of": "2026-06-03", "source": "S-1/A (~60% of post-offering shares)", "source_doc": "S-1/A 0001628280-26-040364", "source_status": "final", "confidence": "high" },
+    "registration_rights_shares": { "value": 9200000000, "currency": null, "as_of": "2026-06-03", "source": "S-1/A — '~9.2 billion shares of Class A (incl. Class B 전환분) ... right to require us to register' (Investors' Rights Agreement, 2020-08-04)", "source_doc": "S-1/A 0001628280-26-040364", "source_status": "final", "confidence": "high" },
+    "rule144_after90d_shares":    { "value": 12200000000, "currency": null, "as_of": "2026-06-03", "source": "S-1/A — '~12.2 billion shares of Class A ... available for resale under Rule 144 starting 90 days after this offering, subject to lock-up restrictions'", "source_doc": "S-1/A 0001628280-26-040364", "source_status": "final", "confidence": "high" },
+    "rule144_note": "9.2B(등록권)·12.2B(Rule 144 90일 후) 오버행은 전량 자유유통이 아니라 락업 제한 대상. 상장 직후 실제 유통은 공모 신주(~555.6M, +초과배정 83.3M)에 한정 — 락업이 실제 유통을 제약하므로 free_float(4~5%)와 충돌하지 않음. 오버행은 락업 해제 일정(첫 실적·+30% 트리거($175.50)·366일·Q2 2027)에 따라 단계적으로 시장에 풀리는 잠재 매도압력. 지수 편입(6/26 FTSE·6/29 MSCI)의 패시브 강제 수요 vs 그 후 락업 해제의 수급 충돌이 단기 핵심 변수."
+  },
+
+  "index_inclusion": {
+    "us_benchmark_blocked": { "value": "S&P Dow Jones Indices는 기존 규정 재확인 → SpaceX의 S&P500 등 미국 벤치마크 조기 편입 차단(2026-06-05 CNBC). 듀얼클래스·유통물량 제약 등으로 즉시 편입 불가.", "as_of": "2026-06-05", "source": "CNBC", "source_doc": "press (CNBC 2026-06-05)", "source_status": "final", "confidence": "high" },
+    "ftse_russell":  { "value": "FTSE Russell이 Russell 1000·Russell Top 200 등에 fast-entry로 편입 — 2026-06-26 마감 후 효력. (2026-05 fast-entry 규정 변경: Russell Top 500 적격 대형 신규상장은 5거래일 후 편입, 분기 리밸런싱 대기 불필요.)", "as_of": "2026-06-12", "source": "Gate News / TradingView / 보도(6/12 확정)", "source_doc": "press", "source_status": "final", "confidence": "high" },
+    "msci":          { "value": "MSCI Standard·Large-cap 지수에 fast-track 편입 — 2026-06-29 효력. (보도→확정)", "as_of": "2026-06-12", "source": "Gate News / TradingView / Reuters(6/12 확정)", "source_doc": "press", "source_status": "final", "confidence": "high" },
+    "passive_demand_note": { "value": "지수 편입 = 패시브 강제 매수 수요 이벤트. 6/26(FTSE)·6/29(MSCI) 효력일 전후 패시브 펀드(IWM/Russell·MSCI 추종)의 강제 편입 매수가 발생. 극히 낮은 유통(4~5%)과 결합 시 가격 상방 압력 가능 — 그 직후 락업 해제 폭포와 수급 충돌. Nasdaq-100 fast-track 가능성도 일부 거론(미확정).", "as_of": "2026-06-12", "source": "보도 종합", "source_doc": "press", "source_status": "press", "confidence": "medium" }
+  },
+
+  "financials_consolidated": {
+    "unit": "USD millions (연결, S-1 재무제표 부록 기준; xAI·X Holdings 공통지배 거래로 2023~2025 소급 결합)",
+    "ocr_caveat": "1차 입력(raws/SpaceX_-_S-1_integrated.md)은 S-1 기반 한국어 분석 리포트의 OCR 추출본. 손익/현금흐름/재무상태표 표는 OCR 오류(콤마·괄호·자릿수 손실) 존재 — 본 스냅샷은 OCR 표를 본문 서술(round 수치)과 교차해 정합값만 채택, 모순/불명값은 confidence 하향 또는 null. EDGAR S-1/A(CIK 1181412) 원문 직접 인용 아님(2차 가공).",
+    "revenue_2023":          { "value": 10387000000, "currency": "USD", "as_of": "2023-12-31", "source": "손익계산서 부록(p52) 매출액 10,387", "source_doc": "raws p52", "source_status": "preliminary", "confidence": "high" },
+    "revenue_2024":          { "value": 14015000000, "currency": "USD", "as_of": "2024-12-31", "source": "손익계산서 부록(p52) 매출액 14,015", "source_doc": "raws p52", "source_status": "preliminary", "confidence": "high" },
+    "revenue_2025":          { "value": 18674000000, "currency": "USD", "as_of": "2025-12-31", "source": "손익계산서 부록(p52) 매출액 18,674; 본문 p5 '매출 $18.7B'와 정합", "source_doc": "raws p52 + p5", "source_status": "preliminary", "confidence": "high" },
+    "revenue_q1_2026":       { "value": 4694000000, "currency": "USD", "as_of": "2026-03-31", "source": "손익계산서 부록(p52) Q1'26 매출액 4,694", "source_doc": "raws p52", "source_status": "preliminary", "confidence": "high" },
+    "cogs_2025":             { "value": 9451000000, "currency": "USD", "as_of": "2025-12-31", "source": "손익계산서 부록(p52) 매출원가 9,451", "source_doc": "raws p52", "source_status": "preliminary", "confidence": "medium" },
+    "rnd_2025":              { "value": 8643000000, "currency": "USD", "as_of": "2025-12-31", "source": "손익계산서 부록(p52) 연구개발비 8,643 (Starship R&D 최종단계로 YoY 급증; FY2024 3,464)", "source_doc": "raws p52", "source_status": "preliminary", "confidence": "medium" },
+    "sga_2025":              { "value": 2644000000, "currency": "USD", "as_of": "2025-12-31", "source": "손익계산서 부록(p52) 판매관리비 2,644", "source_doc": "raws p52", "source_status": "preliminary", "confidence": "medium" },
+    "operating_income_2024": { "value": 466000000, "currency": "USD", "as_of": "2024-12-31", "source": "손익계산서 부록(p52) 영업이익 466 (흑자)", "source_doc": "raws p52", "source_status": "preliminary", "confidence": "medium" },
+    "operating_income_2025": { "value": -2589000000, "currency": "USD", "as_of": "2025-12-31", "source": "손익계산서 부록(p52) 영업이익 (OCR '12589)' → (2,589) 추정; R&D 급증으로 적자전환). [추정] OCR 자릿수 손상 — 부호·절댓값 EDGAR 교차 필요.", "source_doc": "raws p52", "source_status": "preliminary", "confidence": "low" },
+    "operating_income_q1_2026": { "value": -1943000000, "currency": "USD", "as_of": "2026-03-31", "source": "손익계산서 부록(p52) 영업이익 (1,943) 적자", "source_doc": "raws p52", "source_status": "preliminary", "confidence": "low" },
+    "interest_expense_2025": { "value": 1945000000, "currency": "USD", "as_of": "2025-12-31", "source": "손익계산서 부록(p52) 이자비용 1,945", "source_doc": "raws p52", "source_status": "preliminary", "confidence": "medium" },
+    "net_income_2023":       { "value": -4628000000, "currency": "USD", "as_of": "2023-12-31", "source": "현금흐름표 부록(p53) 순이익(손실) (4,628). 손상차손 $3.775B 영향.", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "high" },
+    "net_income_2024":       { "value": 791000000, "currency": "USD", "as_of": "2024-12-31", "source": "현금흐름표 부록(p53) 순이익 791 (흑자)", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "high" },
+    "net_income_2025":       { "value": -4937000000, "currency": "USD", "as_of": "2025-12-31", "source": "현금흐름표 부록(p53) 순이익(손실) (4,937)", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "high" },
+    "net_income_q1_2026":    { "value": -4276000000, "currency": "USD", "as_of": "2026-03-31", "source": "현금흐름표 부록(p53) 순이익(손실) (4,276). 브릿지론 사채상환손실 등 비경상 포함.", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "high" },
+    "da_2025":               { "value": 6701000000, "currency": "USD", "as_of": "2025-12-31", "source": "현금흐름표 부록(p53) 감가상각비&감모상각비 6,701", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "medium" },
+    "sbc_2025":              { "value": 1947000000, "currency": "USD", "as_of": "2025-12-31", "source": "현금흐름표 부록(p53) 주식기반보상 1,947", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "medium" },
+    "operating_cash_flow_2023": { "value": 4520000000, "currency": "USD", "as_of": "2023-12-31", "source": "현금흐름표 부록(p53) 영업활동현금흐름 4,520", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "medium" },
+    "operating_cash_flow_2024": { "value": 5776000000, "currency": "USD", "as_of": "2024-12-31", "source": "현금흐름표 부록(p53) 영업활동현금흐름 5,776", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "medium" },
+    "operating_cash_flow_2025": { "value": 6785000000, "currency": "USD", "as_of": "2025-12-31", "source": "현금흐름표 부록(p53) 영업활동현금흐름 6,785", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "medium" },
+    "operating_cash_flow_q1_2026": { "value": 1047000000, "currency": "USD", "as_of": "2026-03-31", "source": "현금흐름표 부록(p53) 영업활동현금흐름 1,047", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "medium" },
+    "capex_2025_total":      { "value": -20737000000, "currency": "USD", "as_of": "2025-12-31", "source": "현금흐름표 부록(p53) 자본적지출 합계 (20,737): 우주(3,832)+통신(4,178)+AI(12,727)", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "medium" },
+    "capex_q1_2026_total":   { "value": -10107000000, "currency": "USD", "as_of": "2026-03-31", "source": "현금흐름표 부록(p53) Q1'26 자본적지출: 우주(1,052)+통신(1,332)+AI(7,723) = (10,107). AI 자본지출 압도적.", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "medium" },
+    "fcf_2025":              { "value": -15374000000, "currency": "USD", "as_of": "2025-12-31", "source": "현금흐름표 부록(p53) 잉여현금흐름(조정) (15,374); 본문 p49 'FY2025 FCF -$15B'와 정합", "source_doc": "raws p53 + p49", "source_status": "preliminary", "confidence": "high" },
+    "fcf_q1_2026":           { "value": -9710000000, "currency": "USD", "as_of": "2026-03-31", "source": "현금흐름표 부록(p53) Q1'26 잉여현금흐름 (9,710); 본문 p49 'Q1 -$9B'와 정합", "source_doc": "raws p53 + p49", "source_status": "preliminary", "confidence": "high" }
+  },
+
+  "balance_sheet": {
+    "unit": "USD millions (연결, S-1 재무상태표 부록 p54)",
+    "cash_and_equivalents_2025":   { "value": 24747000000, "currency": "USD", "as_of": "2025-12-31", "source": "재무상태표(p54) 현금및현금성자산 24,747", "source_doc": "raws p54", "source_status": "preliminary", "confidence": "high" },
+    "cash_and_equivalents_q1_2026":{ "value": 15852000000, "currency": "USD", "as_of": "2026-03-31", "source": "재무상태표(p54) 현금및현금성자산 15,852 (AI capex로 급감)", "source_doc": "raws p54", "source_status": "preliminary", "confidence": "high" },
+    "cash_post_ipo_proforma":      { "value": 90305000000, "currency": "USD", "as_of": "2026-03-31", "source": "재무상태표(p54) 'IPO 영향' 열 현금 90,305 (프로포마). 본문 p49 '$90B 현금 확보'와 정합.", "source_doc": "raws p54 + p49", "source_status": "preliminary", "confidence": "medium" },
+    "short_term_investments_q1_2026": { "value": 7823000000, "currency": "USD", "as_of": "2026-03-31", "source": "재무상태표(p54) 단기투자자산 7,823", "source_doc": "raws p54", "source_status": "preliminary", "confidence": "medium" },
+    "total_debt_q1_2026":          { "value": 30265000000, "currency": "USD", "as_of": "2026-03-31", "source": "재무상태표(p54) 차입금및금융리스 유동 1,538 + 비유동 28,727 = 30,265. 브릿지론(26/3월 $20B 조달·$17B 상환, 유효금리 4.58%) 반영.", "source_doc": "raws p54 + p49", "source_status": "preliminary", "confidence": "medium" },
+    "net_debt_q1_2026":            { "value": 6590000000, "currency": "USD", "as_of": "2026-03-31", "source": "총차입금 30,265 − (현금 15,852 + 단기투자 7,823) = 순부채 6,590 (Q1'26, IPO 전). IPO 후 프로포마 기준 순현금 전환(현금 90,305).", "source_doc": "derived from raws p54", "source_status": "preliminary", "confidence": "low" },
+    "total_assets_2025":           { "value": 92079000000, "currency": "USD", "as_of": "2025-12-31", "source": "재무상태표(p54) 자산 합계 92,079", "source_doc": "raws p54", "source_status": "preliminary", "confidence": "high" },
+    "total_assets_q1_2026":        { "value": 102094000000, "currency": "USD", "as_of": "2026-03-31", "source": "재무상태표(p54) 자산 합계 102,094", "source_doc": "raws p54", "source_status": "preliminary", "confidence": "high" },
+    "total_assets_post_ipo_proforma": { "value": 176547000000, "currency": "USD", "as_of": "2026-03-31", "source": "재무상태표(p54) 'IPO 영향' 자산 합계 176,547 (프로포마)", "source_doc": "raws p54", "source_status": "preliminary", "confidence": "medium" },
+    "total_liabilities_q1_2026":   { "value": 60512000000, "currency": "USD", "as_of": "2026-03-31", "source": "재무상태표(p54) 부채 합계 60,512", "source_doc": "raws p54", "source_status": "preliminary", "confidence": "medium" },
+    "ppe_net_q1_2026":             { "value": 53879000000, "currency": "USD", "as_of": "2026-03-31", "source": "재무상태표(p54) 유형자산 53,879 (Starlink 위성 발사비용 자본화 포함)", "source_doc": "raws p54", "source_status": "preliminary", "confidence": "medium" },
+    "accumulated_deficit_q1_2026": { "value": -41311000000, "currency": "USD", "as_of": "2026-03-31", "source": "재무상태표(p54) 이익잉여금(누적손실) (41,311)", "source_doc": "raws p54", "source_status": "preliminary", "confidence": "high" },
+    "total_equity_q1_2026":        { "value": 34533000000, "currency": "USD", "as_of": "2026-03-31", "source": "재무상태표(p54) 자기자본 합계 34,533 (xAI 인수로 주식발행초과금 +$36.4B, 우선주 보통주 전환 반영)", "source_doc": "raws p54 + p49", "source_status": "preliminary", "confidence": "medium" },
+    "debt_ratio_post_ipo_note":    { "value": "본문 p49: IPO 영향 반영 시 Q1'26 기준 차입금비율 28%까지 하락. IPO 주식발행초과금 +$74.4B(초과배정 행사 시 최대 +$85.7B).", "as_of": "2026-03-31", "source": "raws p49", "source_status": "preliminary", "confidence": "medium" }
+  },
+
+  "segment_financials": {
+    "latest_annual": "FY2025",
+    "note": "S-1 3개 세그먼트: Connectivity(Starlink 통신), Space(발사 서비스), AI(xAI/X — 26년 2월 인수, 공통지배로 2023~2025 소급결합; 2023~24 AI 매출 대부분은 당시 Twitter였던 X의 광고·구독·데이터). Space 매출은 고객 발사만 반영 — Starlink 내부 발사(2025년 165회 중 122회)는 부문간 매출 미인식·유형자산 자본화(실제 활동의 ~86%가 매출 미계상).",
+    "connectivity_revenue_2025":          { "value": 11387000000, "currency": "USD", "as_of": "2025-12-31", "source": "S-1/A MD&A — Connectivity 매출 $11,387M (YoY +$3,788M, +49.8%)", "source_doc": "S-1/A 0001628280-26-040364 + raws p35", "source_status": "final", "confidence": "high" },
+    "connectivity_operating_income_2025": { "value": 4423000000, "currency": "USD", "as_of": "2025-12-31", "source": "S-1/A — Connectivity 영업이익 $4,423M (YoY +120.4%)", "source_doc": "S-1/A 0001628280-26-040364", "source_status": "final", "confidence": "high" },
+    "connectivity_adj_ebitda_2025":       { "value": 7168000000, "currency": "USD", "as_of": "2025-12-31", "source": "S-1/A — Connectivity Segment Adjusted EBITDA $7,168M (YoY +86.2%)", "source_doc": "S-1/A 0001628280-26-040364", "source_status": "final", "confidence": "high" },
+    "connectivity_revenue_q1_2026":       { "value": 3257000000, "currency": "USD", "as_of": "2026-03-31", "source": "S-1/A — Q1'26 Connectivity 매출 $3,257M", "source_doc": "S-1/A 0001628280-26-040364", "source_status": "final", "confidence": "high" },
+    "connectivity_operating_income_q1_2026": { "value": 1188000000, "currency": "USD", "as_of": "2026-03-31", "source": "S-1/A — Q1'26 Connectivity 영업이익 $1,188M", "source_doc": "S-1/A 0001628280-26-040364", "source_status": "final", "confidence": "high" },
+    "connectivity_adj_ebitda_q1_2026":    { "value": 2087000000, "currency": "USD", "as_of": "2026-03-31", "source": "S-1/A — Q1'26 Connectivity Segment Adjusted EBITDA $2,087M", "source_doc": "S-1/A 0001628280-26-040364", "source_status": "final", "confidence": "high" },
+    "starlink_subscribers":               { "value": 10300000, "currency": null, "as_of": "2026-03-31", "source": "S-1/A — '~10.3M Starlink Subscribers across 164 countries'. 본문 교차(가입자 YoY +99.9%).", "source_doc": "S-1/A 0001628280-26-040364 + raws p34", "source_status": "final", "confidence": "high" },
+    "starlink_arpu_monthly_q1_2026":      { "value": 66, "currency": "USD", "as_of": "2026-03-31", "source": "리포트(raws p34): Q1'26 월 ARPU ~$66 (YoY -11.2%, 해외확장·저가요금제). 일부 본문 '$61' 표기 — 편차 존재.", "source_doc": "raws p34/p36", "source_status": "press", "confidence": "medium" },
+    "space_revenue_2024":                 { "value": 3796000000, "currency": "USD", "as_of": "2024-12-31", "source": "우주 사업 손익(부록 p29) FY2024 매출 3,796", "source_doc": "raws p29", "source_status": "preliminary", "confidence": "medium" },
+    "space_revenue_2025":                 { "value": 4086000000, "currency": "USD", "as_of": "2025-12-31", "source": "우주 사업 손익(부록 p29) FY2025 매출 4,086. 2025 발사 165회 중 고객 43회(내부 Starlink 122회).", "source_doc": "raws p29 + p28", "source_status": "preliminary", "confidence": "high" },
+    "space_operating_income_2024":        { "value": 21000000, "currency": "USD", "as_of": "2024-12-31", "source": "우주 사업 손익(부록 p29) FY2024 영업이익 21 (소폭 흑자)", "source_doc": "raws p29", "source_status": "preliminary", "confidence": "medium" },
+    "space_operating_loss_2025":          { "value": -657000000, "currency": "USD", "as_of": "2025-12-31", "source": "우주 사업 손익(부록 p29) FY2025 영업손실 (657). Starship R&D 최종단계 비용 증가가 주원인(사업악화 아님).", "source_doc": "raws p29 + p28", "source_status": "preliminary", "confidence": "high" },
+    "space_revenue_q1_2026":              { "value": 619000000, "currency": "USD", "as_of": "2026-03-31", "source": "우주 사업 손익(부록 p29) Q1'26 매출 619", "source_doc": "raws p29", "source_status": "preliminary", "confidence": "high" },
+    "space_operating_loss_q1_2026":       { "value": -662000000, "currency": "USD", "as_of": "2026-03-31", "source": "우주 사업 손익(부록 p29) Q1'26 영업손실 (662)", "source_doc": "raws p29", "source_status": "preliminary", "confidence": "high" },
+    "ai_capex_2025":                      { "value": -12727000000, "currency": "USD", "as_of": "2025-12-31", "source": "현금흐름표 부록(p53) AI 부문 자본적지출 (12,727) — 전 사업부 최대(우주 3,832·통신 4,178 합산 초과). COLOSSUS/COLOSSUS II 데이터센터.", "source_doc": "raws p53 + p13", "source_status": "preliminary", "confidence": "medium" },
+    "ai_capex_q1_2026":                   { "value": -7723000000, "currency": "USD", "as_of": "2026-03-31", "source": "현금흐름표 부록(p53) Q1'26 AI 부문 자본적지출 (7,723) — 압도적 최대.", "source_doc": "raws p53", "source_status": "preliminary", "confidence": "medium" },
+    "ai_segment_note":                    { "value": "AI 세그먼트(xAI/Grok/X): COLOSSUS I(H100 15만+H200 5만+GB200 3만, Anthropic 전량 임대 월$1.25B~2029.5, 총$40B+; 90일 해지조항)·COLOSSUS II(GB200/300 ~55만, 2GW 목표, 일부 Google 임대 월$0.92B 32개월 ~$30B). Cursor 합병 콜옵션($60B, 연말까지). 우주 데이터센터 AI1 위성 프로토타입 2기 2027초 발사 예정. AI 세그먼트 독립 매출/이익 정밀 수치는 본 추출본에서 미확보 — EDGAR S-1 세그먼트 주석 교차 필요.", "as_of": "2026-06-03", "source": "S-1/A + raws p40/p44", "source_doc": "S-1/A 0001628280-26-040364 + raws", "source_status": "preliminary", "confidence": "low" }
+  },
+
+  "use_of_proceeds": { "value": ["AI 컴퓨팅 인프라(COLOSSUS II 등 데이터센터)", "발사 인프라·발사체(Starship 대량 양산)", "위성망 확장(Starlink V3/Starlink Mobile)", "일반 기업 목적"], "as_of": "2026-06-03", "source": "S-1/A Use of Proceeds (요지) + 본문 p49 (대략 3년치 capex 충당, 평균 FCF 적자 -$30B/년 가정)", "source_doc": "S-1/A 0001628280-26-040364 + raws p49", "source_status": "preliminary", "confidence": "medium" },
+
+  "korea_investor_access": {
+    "note": "공모 청약은 종료(2026-06-12 상장). 한국 투자자의 유일한 진입 경로는 상장 후 미국 정규장 시장가/지정가 매수 — 국내 증권사(키움·삼성·미래에셋·토스증권 등) 해외주식 계좌. 첫날(6/12) 변동성 컸으나(시초 $150→고가 $176.52→종가 $160.95) 종료, 6/15(월) 정규장 재개. 환율 ~1,518원/$로 원화 환산 부담(공모가 $135≈205,000원, 현재가 $160.95≈244,000원/주). 미국주식 양도세(연 250만원 공제 후 22%)·배당세 고려. 공모 인수단에 Mirae Asset Securities Co., Ltd.(co-manager) 참여했으나 국내 일반 배정 여부는 별도 확인 필요(상장 후에는 무관).",
+    "underwriter_kr_linked": ["Mirae Asset Securities Co., Ltd. (co-manager)"],
+    "as_of": "2026-06-14", "source": "FWP 인수단 명단 + 상장 후 시장 관행 + 한국 해외주식 세제", "source_doc": "FWP 0001628280-26-042466 + 일반", "source_status": "final", "confidence": "medium"
+  },
+
+  "fx": {
+    "USDKRW": { "value": 1518.27, "currency": "KRW", "as_of": "2026-06-12", "source": "USD/KRW 1,518.27 (6/12, +0.14% DoD) — TradingEconomics/Investing/wonforecast 교차. FRED DEXKOUS 갱신 권장. 기존 시드 가정(1,380)에서 원화 큰 폭 약세 — 한국 투자자 원화 환산 부담 상향.", "source_doc": "press (TradingEconomics/Investing 2026-06-12)", "source_status": "press", "confidence": "medium" }
   },
 
   "benchmark": {
-    "KOSPI_index": {
-      "value": 7484, "as_of": "2026-06-09", "source": "보도/Trading Economics", "source_doc": "KOSPI 마감 보도", "source_status": "press", "confidence": "low",
-      "note": "보도 인용 KOSPI 7,484 (06-09, 3거래일 연속 하락 -8.29% 보도). 2025-2026 강세장 국면 반영이나 1차(KRX) 미교차로 confidence 하향."
-    },
-    "peer_SK_hynix_000660": {
-      "price":      { "value": 2018000, "currency": "KRW", "as_of": "2026-06-09", "source": "alphasquare/Investing.com", "source_doc": "SK하이닉스 시세", "source_status": "final", "confidence": "medium", "note": "06-02 사상최고 2,407,000원 기록 후 변동" },
-      "market_cap": { "value": 1353550000000000, "currency": "KRW", "as_of": "2026-06-09", "source": "alphasquare", "source_doc": "SK하이닉스 시총", "source_status": "press", "confidence": "low", "note": "약 1,353.55조원 (보도)" },
-      "PER":        { "value": null, "as_of": "2026-06-09", "source": null, "source_doc": null, "source_status": null, "confidence": "unavailable", "note": "SK하이닉스 PER 1차 미확보." }
-    }
+    "sp500":  { "value": 7431.46, "as_of": "2026-06-12", "source": "S&P500 종가 7,431.46 (+0.50%)", "source_doc": "press (입력 지정)", "source_status": "press", "confidence": "medium" },
+    "nasdaq": { "value": 25888.84, "as_of": "2026-06-12", "source": "Nasdaq 종가 25,888.84 (+0.31%)", "source_doc": "press (입력 지정)", "source_status": "press", "confidence": "medium" },
+    "spcx_first_day_alpha_pct": { "value": 18.72, "as_of": "2026-06-12", "source": "SPCX 첫날 +19.22% − S&P500 +0.50% = +18.72%p 알파. (Nasdaq 대비 +18.91%p)", "source_doc": "derived", "source_status": "final", "confidence": "high" }
   },
 
   "self_check": {
-    "market_cap_recompute_common": {
-      "expected": 1922269981100000, "formula": "322,000 × 5,969,782,550 (보통주 발행총수)", "computed": 1922269981100000, "pass": true
-    },
-    "market_cap_recompute_combined": {
-      "expected": 2089727424550000, "formula": "보통주(발행총수) 1,922,269,981,100,000 + 우선주 167,457,443,450,000", "computed": 2089727424550000, "pass": true
-    },
-    "market_cap_fnguide_consistency": {
-      "fnguide_reported": 1882501711776000, "recompute": "322,000 × 5,846,278,608 = 1,882,501,711,776,000", "pass": true,
-      "note": "FnGuide 시총은 발행총수가 아닌 자사주 차감 후 주식수 기준 — 산식 일치 확인. 발행총수 기준과 약 39.8조 차이는 자사주(약 1.23억주)에서 기인."
-    },
-    "PER_recompute": {
-      "via_mcap_over_net": "1,922.3조 ÷ 45.21조 = 42.5x", "via_price_over_EPS": "322,000 ÷ 6,605 = 48.75x",
-      "fnguide_reported": 64.46, "pass": true,
-      "note": "derived 42.5~48.8x는 산식 일치. FnGuide 64.46x는 분모 정의/시점 차이로 괴리 — conflicts에 기록, 채택값은 derived."
-    },
-    "segment_revenue_reconciliation_FY2025": {
-      "segment_sum": 365695300000000, "consolidated": 333605900000000,
-      "diff_pct": 9.62, "pass": true,
-      "note": "부문 매출 합(365.7조)이 연결 매출(333.6조)을 9.62% 초과 — 부문간 내부거래 제거(연결조정)로 정상. DX의 세트 매출이 DS/SDC 부품을 내부 소비. 허용 범위."
-    },
-    "overall": "PASS",
-    "overall_note": "핵심 산식(시총=주가×주식수, PER, 부문매출 합≈연결) 모두 정합. 단, 다수 핵심값이 1차(DART/KRX) 직접 교차 대신 FnGuide·보도 기반(2026 데이터는 비정상적 급증 포함) — confidence 태그로 표기. self_check 산술 자체는 모두 PASS이므로 overall PASS 유지. 데이터 품질 한계는 data_quality.notes 참조."
+    "market_cap_ipo_recompute":      { "expected": 1767265285275, "formula": "135 × 13,090,853,965", "computed": 1767265285275, "pass": true },
+    "market_cap_ipo_gs_recompute":   { "expected": 1778515285230, "formula": "135 × 13,174,187,298", "computed": 1778515285230, "pass": true },
+    "market_cap_current_recompute":  { "expected": 2106972945667, "formula": "160.95 × 13,090,853,965", "computed": 2106972945667, "pass": true, "note": "현재가(6/12 종가) 기준 시총 ~$2.107T — 보도 '~$2.1T'와 정합." },
+    "market_cap_high_recompute":     { "expected": 2310797541902, "formula": "176.52 × 13,090,853,965", "computed": 2310797541902, "pass": true, "note": "장중 고가 시 ~$2.31T — 보도 '한때 $2.3T 초과'와 정합." },
+    "proceeds_recompute":            { "expected": 74999999925, "formula": "135 × 555,555,555", "computed": 74999999925, "pass": true, "note": "FWP 명시 Size $74,999,999,925와 정확 일치. 초과배정 전량 행사 시 $86,249,999,880." },
+    "share_buildup_check":           { "formula": "pre-offering Class A 6,932,508,000 + new 555,555,555 = 7,488,063,555", "computed": 7488063555, "pass": true },
+    "first_day_return_check":        { "formula": "(160.95 − 135) / 135", "computed": 19.22, "unit": "%", "pass": true, "note": "보도 '+19%'와 정합." },
+    "free_float_recompute":          { "base_pct": 4.24, "with_oa_pct": 4.85, "reported_claim_pct": 7, "msci_reported_pct": 4, "gap_shares_vs_7pct": 360804223, "gap_pct_vs_7pct": 2.76, "reconciled": false, "note": "7% 보도는 신주(+초과배정)로 설명 안 됨(360.8M주 갭). 리포트/MSCI 4~4.25%는 신주 산식에 근접. 7% 정의 미해결 → fact-checker 규명 대상." },
+    "financial_consistency_check":   { "fy2025_revenue_table_vs_narrative": "18,674(p52) vs $18.7B(p5) 정합", "fy2025_fcf_table_vs_narrative": "(15,374)(p53) vs -$15B(p49) 정합", "q1_2026_fcf_table_vs_narrative": "(9,710)(p53) vs -$9B(p49) 정합", "pass": true, "note": "OCR 표 핵심값이 본문 서술과 교차 정합. 단 operating_income_2025·net 일부는 OCR 자릿수 손상으로 confidence:low(EDGAR 교차 필요)." },
+    "overall": "PASS"
   },
 
   "data_quality": {
     "unavailable_fields": [
-      "financials.quarter_1Q2026.net_income",
-      "financials.quarter_1Q2026.operating_cash_flow",
-      "financials.quarter_1Q2026.capex",
-      "balance.cash_and_equivalents",
-      "balance.total_debt",
-      "valuation.EV_EBITDA",
-      "benchmark.peer_SK_hynix_000660.PER"
+      "post_listing_trading.retail_turnover_first_day (전체 거래량/회전율 미확보 — 개인 거래대금 $453M만 확보)",
+      "segment_financials.ai_segment_note (AI 세그먼트 독립 매출/이익 정밀 수치 미확보)",
+      "financials_consolidated.operating_income_2025 ([추정] OCR 자릿수 손상 — 부호·절댓값 EDGAR 교차 필요)",
+      "free_float.reported_float_claim_pct (7% 정의·분모 미해결 — reconciliation_required)"
     ],
     "conflicts": [
-      {
-        "field": "shares / market_cap (보통주 주식수 기준)",
-        "chosen": "발행총수 5,969,782,550 (IR 상장현황) → 시총 1,922.3조",
-        "alternative": "FnGuide 발행주식수 5,846,278,608 → 보고 시총 1,882.5조",
-        "reason": "FnGuide는 자사주(약 1.23억주) 차감 후 주식수를 '발행주식수'로 표기. 발행총수 기준(IR/DART)을 본 필드 채택, FnGuide값 별도 보존."
-      },
-      {
-        "field": "valuation.PER",
-        "chosen": "derived 42.5~48.8x (시총÷연결순이익, 주가÷EPS)",
-        "alternative": "FnGuide 보고 64.46x",
-        "reason": "FnGuide 64.46x는 분모 정의(지배주주 순이익 등) 또는 산정 시점 차이로 추정. 산식 투명한 derived값 채택."
-      },
-      {
-        "field": "valuation.PBR",
-        "chosen": "derived 5.03x (주가÷BPS 63,976)",
-        "alternative": "FnGuide 보고 8.31x",
-        "reason": "price/BPS 산식과 FnGuide 보고 PBR 불일치 — BPS 시점/기준 차이 추정. 산식 검증 가능한 derived값 채택."
-      },
-      {
-        "field": "ownership.foreign_ownership_pct",
-        "chosen": "48.42% (2026-05-20 보도)",
-        "alternative": "47.68% (FnGuide Snapshot)",
-        "reason": "시점 차이(05-20 vs 06-09). 외국인 지분 변동 활발 — 두 값 모두 보존, 분석시점 06-10 정확값은 별도 확인 필요."
-      }
+      { "field": "post_listing_trading.close_price", "chosen": 160.95, "alternative": "161.11 (+19.34%, 일부 보도)", "reason": "CNBC/NPR/NBC 다수 $160.95(+19.2%)·입력 지정값 채택. $161.11과 0.1% 차로 시총 영향 미미(<$2.1B)." },
+      { "field": "free_float.reported_float_claim_pct", "chosen": "공모 신주 산식 4.24%(base)/4.85%(with OA)를 1차 기준", "alternative": "Reuters 7%, MSCI/리포트 4~4.25%", "reason": "보도 4~7% 상충. 공모 구조 산식을 1차로, 보도값은 press/low 병기. 7%는 reconciliation_required." },
+      { "field": "fx.USDKRW", "chosen": 1518.27, "alternative": "1,380 (기존 시드 가정)", "reason": "6/12 실측 ~1,518원(원화 큰 폭 약세). 시드 1,380은 폐기. FRED DEXKOUS 최종 교차 권장." },
+      { "field": "segment_financials.starlink_arpu_monthly_q1_2026", "chosen": 66, "alternative": "61 (본문 p36 일부)", "reason": "리포트 내 $66(p34)·$61(p36) 편차. $66 채택, $61 병기 — fact-checker 규명 대상." }
     ],
-    "notes": "[데이터 소싱 한계] DART API_K_DART 환경변수 미설정 + 본 repo에 k-dart 스킬 부재로 DART OpenAPI 직접 호출 불가. 대신 웹 검색(삼성전자 실적발표/Newsroom, FnGuide Company Guide, Investing.com, 보도)으로 수집·교차. [2026 데이터 이상치] 1Q26 매출 133.9조·영업익 57.2조(+755% YoY), DS 영업익 53.7조, KOSPI 7,484, USDKRW ~1,527 등은 검색 결과 기반으로 일반적 추세를 크게 벗어난 값 — 출처가 보도/2차이고 1차(DART 1분기보고서·KRX) 미교차이므로 confidence를 medium/low로 표기하고 비정상 급증을 note에 명시. fact-checker가 DART 제58기 1분기보고서·KRX 시세로 우선 재검증할 것. [현금성/차입금] 정확 수치 미확보 → 순현금 상태(state)만 기록, EV/EBITDA 산출 보류. [환율] 분석시점(06-10) 정확 종가/매매기준율 미확보, 06-08값(1,526.99) 대용. [self_check] 산술 정합성은 전부 PASS(시총·PER·부문매출 합). 데이터 신선도/1차성 한계는 confidence 태그와 conflicts로 분리 관리."
+    "notes": "재작성(상장 후, as_of 2026-06-14): ① 거래 데이터 추가 — 시초 $150·고가 $176.52·종가/현재가 $160.95(+19.2%)·시총 현재가 기준 $2.107T(공모가 기준 $1.767T 별도 필드). post_listing_trading 블록 신설. ② 1차 입력 raws/SpaceX_-_S-1_integrated.md(S-1 기반 한국어 분석 리포트 OCR 추출본)에서 연결 손익(매출 FY25 $18.674B·순손실 FY25 $(4.937)B·Q1'26 $(4.276)B)·현금흐름(OCF FY25 $6.785B·FCF FY25 $(15.374)B·Q1'26 $(9.710)B·capex AI 압도)·재무상태표(현금 Q1'26 $15.852B·총부채 ~$30.265B·총자산 $102.094B·IPO 프로포마 현금 $90.305B·자산 $176.547B) 추출. financials_consolidated·balance_sheet 블록 신설. OCR 표는 본문 서술과 교차해 정합값만 채택, 자릿수 손상값(영업이익 2025 등)은 confidence:low. ③ 세그먼트 — Connectivity는 S-1/A MD&A 확정값 유지, Space는 부록 p29(FY25 매출 $4.086B·영업손실 $(657)M), AI는 capex만 확보(독립 손익 미확보). ④ 지수 편입 확정(보도→final): FTSE Russell 6/26 마감 후, MSCI 6/29. S&P500 조기편입은 차단(6/5). ⑤ FX 1,380→1,518(원화 약세) 갱신. 벤치마크(S&P/Nasdaq) 추가, 첫날 알파 +18.7%p. ⑥ self_check 전부 PASS(공모가/현재가/고가 시총·조달·주식빌드업·첫날수익률·재무 본문교차 정합). free_float만 7% 보도 미해결(reconciliation_required). ⑦ raws는 EDGAR 원문이 아닌 2차 가공(OCR) — financials/balance_sheet/valuation 배수는 source_status:preliminary 또는 press, EDGAR S-1/A(CIK 1181412) 직접 교차를 fact-checker에 권고. 투자 판단·전망·목표가는 의도적 미포함(Bull/Bear/Judge 몫)."
   }
 }

@@ -1,62 +1,62 @@
 {
   "status": "ok",
-  "as_of": "2026-06-11",
+  "as_of": "2026-06-14",
   "source": "yfinance",
-  "ticker_resolved": "005930.KS",
+  "ticker_resolved": "NVDA",
   "fast_info": {
-    "last_price": 302500.0,
-    "market_cap": 1986385339565000.0,
-    "shares_outstanding": 6566563106.0,
-    "year_high": 370000.0,
-    "year_low": 56900.0,
-    "currency": "KRW",
-    "exchange": "KSC"
+    "last_price": 205.19,
+    "market_cap": 4969907049133.301,
+    "shares_outstanding": 24221000000.0,
+    "year_high": 236.54,
+    "year_low": 142.03,
+    "currency": "USD",
+    "exchange": "NMS"
   },
   "indicators": {
-    "last_close": 302500.0,
-    "last_date": "2026-06-10",
-    "rows": 244,
+    "last_close": 205.19,
+    "last_date": "2026-06-12",
+    "rows": 251,
     "sma": {
-      "sma20": 304325.0,
-      "sma50": 250769.0,
-      "sma200": 153740.0
+      "sma20": 214.6205,
+      "sma50": 206.9116,
+      "sma200": 189.2599
     },
     "price_vs_sma_pct": {
-      "sma20": -0.6,
-      "sma50": 20.63,
-      "sma200": 96.76
+      "sma20": -4.39,
+      "sma50": -0.83,
+      "sma200": 8.42
     },
-    "vwma20": 305876.9824,
+    "vwma20": 214.8127,
     "macd": {
-      "line": 20343.2938,
-      "signal": 23692.3603,
-      "histogram": -3349.0665,
+      "line": -1.1007,
+      "signal": 1.2573,
+      "histogram": -2.358,
       "cross": "none"
     },
-    "rsi14": 52.79,
+    "rsi14": 45.24,
     "bollinger": {
-      "upper": 357054.9725,
-      "mid": 304325.0,
-      "lower": 251595.0275,
-      "position_0to1": 0.483
+      "upper": 229.5632,
+      "mid": 214.6205,
+      "lower": 199.6778,
+      "position_0to1": 0.184
     },
-    "atr14": 21594.9399,
-    "atr14_pct_of_price": 7.14,
+    "atr14": 8.0314,
+    "atr14_pct_of_price": 3.91,
     "returns_pct": {
-      "1w": -16.09,
-      "1m": 12.66,
-      "3m": 74.35,
-      "6m": 200.1,
-      "1y": 410.98
+      "1w": 0.04,
+      "1m": -9.14,
+      "3m": 13.84,
+      "6m": 11.65,
+      "1y": 44.53
     },
-    "max_drawdown_pct": -23.3,
-    "high_52w": 360500.0,
-    "low_52w": 57200.0,
-    "pct_from_52w_high": -16.09,
+    "max_drawdown_pct": -20.22,
+    "high_52w": 235.74,
+    "low_52w": 141.97,
+    "pct_from_52w_high": -12.96,
     "volume": {
-      "last": 1191.0,
-      "avg20": 33040461.0,
-      "last_vs_avg20": 0.0
+      "last": 112001800.0,
+      "avg20": 176040070.0,
+      "last_vs_avg20": 0.64
     }
   }
 }

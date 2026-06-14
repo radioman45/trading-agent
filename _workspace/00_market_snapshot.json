@@ -1,227 +1,170 @@
 {
   "schema_version": "1.0",
-  "as_of": "2026-06-11",
-  "company": "삼성전자",
-  "ticker": "005930",
-  "market": "KR",
-  "exchange": "KOSPI",
-  "reporting_currency": "KRW",
+  "as_of": "2026-06-14",
+  "company": "엔비디아",
+  "ticker": "NVDA",
+  "market": "US",
+  "exchange": "NASDAQ",
+  "reporting_currency": "USD",
   "identifiers": {
-    "ticker_resolved": "005930.KS",
-    "corp_code_dart": "00126380",
-    "fiscal_year_end": "12-31"
+    "fiscal_year_end": "01-31"
   },
+
   "price": {
-    "value": 302500,
-    "currency": "KRW",
-    "as_of": "2026-06-10",
-    "source": "yfinance fast_info 종가; stockanalysis.com·Google Finance·investing.com 교차 일치",
+    "value": 205.19,
+    "currency": "USD",
+    "as_of": "2026-06-13",
+    "source": "yfinance 종가(2026-06-12 $205.19) + WebSearch 교차(2026-06-13 종가 $205.19 확인)",
     "confidence": "high"
   },
+
   "market_cap": {
-    "value": 1986385339565000,
-    "currency": "KRW",
-    "as_of": "2026-06-10",
-    "source": "yfinance fast_info (price × 총상장주식수 6,566,563,106, 우선주 포함)",
-    "confidence": "medium"
+    "value": 4969907049133,
+    "currency": "USD",
+    "as_of": "2026-06-12",
+    "source": "yfinance fast_info",
+    "confidence": "high"
   },
+
   "shares_outstanding": {
-    "value": 6566563106,
+    "value": 24221000000,
     "currency": null,
-    "as_of": "2026-06-10",
-    "source": "yfinance fast_info (보통주+우선주 총 상장주식수)",
-    "confidence": "medium"
+    "as_of": "2026-06-12",
+    "source": "yfinance fast_info, WebSearch(24.22B) 교차 확인",
+    "confidence": "high"
   },
+
   "fx": {
     "USDKRW": {
-      "value": 1516.5,
+      "value": 1520.02,
       "currency": "KRW",
-      "as_of": "2026-06-10",
-      "source": "investing.com USD/KRW; 1,472~1,516 레인지 중 현재가",
-      "confidence": "medium"
+      "as_of": "2026-06-14",
+      "source": "TradingEconomics — 2026-06-14 현물 환율 $1,520.02",
+      "confidence": "high"
     }
   },
+
   "benchmark": {
     "primary": {
-      "name": "KOSPI",
-      "level": 7613.2,
-      "as_of": "2026-06-10",
-      "source": "WebSearch (alphasquare/investing 교차)",
-      "confidence": "medium"
+      "name": "S&P500",
+      "level": 7431.46,
+      "as_of": "2026-06-12",
+      "source": "WebSearch(CNBC, SeekingAlpha) — 2026-06-12 종가",
+      "confidence": "high"
+    },
+    "secondary": {
+      "name": "NASDAQ Composite",
+      "level": 25888.84,
+      "as_of": "2026-06-12",
+      "source": "WebSearch(CNBC) — 2026-06-12 종가",
+      "confidence": "high"
     }
   },
+
   "financials": {
-    "latest_period": "FY2026 Q1",
+    "latest_period": "FY2027 Q1",
     "period_type": "quarterly",
+    "period_end": "2026-04-26",
     "revenue": {
-      "value": 133873444000000,
-      "currency": "KRW",
-      "as_of": "2026-03-31",
-      "source": "DART 1차 공시(삼성전자 2026 1분기보고서, 제58기 1분기말, 연결 CFS, fnlttSinglAcntAll API)",
+      "value": 81600000000,
+      "currency": "USD",
+      "as_of": "2026-04-26",
+      "source": "NVIDIA IR 공시(Q1 FY2027 실적발표, 2026-05-20) + TIKR.com 교차",
       "confidence": "high"
     },
     "operating_income": {
-      "value": 57232797000000,
-      "currency": "KRW",
-      "as_of": "2026-03-31",
-      "source": "DART 1차 공시(삼성전자 2026 1분기보고서, 제58기 1분기말, 연결 CFS, fnlttSinglAcntAll API)",
+      "value": 53500000000,
+      "currency": "USD",
+      "as_of": "2026-04-26",
+      "source": "NVIDIA IR 공시(Q1 FY2027 실적발표, 2026-05-20) — GAAP 영업이익",
       "confidence": "high"
     },
     "net_income": {
-      "value": 47225272000000,
-      "currency": "KRW",
-      "as_of": "2026-03-31",
-      "source": "DART 1차 공시(삼성전자 2026 1분기보고서, 제58기 1분기말, 연결 CFS, fnlttSinglAcntAll API)",
+      "value": 58300000000,
+      "currency": "USD",
+      "as_of": "2026-04-26",
+      "source": "NVIDIA IR 공시(Q1 FY2027 실적발표, 2026-05-20) — GAAP 순이익",
       "confidence": "high"
     },
     "total_debt": {
-      "value": 28138794000000,
-      "currency": "KRW",
-      "as_of": "2026-03-31",
-      "source": "DART 1차 공시(삼성전자 2026 1분기보고서, 제58기 1분기말, 연결 CFS, fnlttSinglAcntAll API) — 단기차입금 19,546,315 + 유동성장기부채 1,191,168 + 사채 7,515 + 장기차입금 7,393,796 (백만원)",
-      "confidence": "high"
+      "value": 7470000000,
+      "currency": "USD",
+      "as_of": "2026-04-26",
+      "source": "10-Q(FY2027 Q1) — 장기부채 공정가치 $7.4B, stock-analysis-on.net 교차",
+      "confidence": "medium"
     },
     "cash_and_equivalents": {
-      "value": 73306751000000,
-      "currency": "KRW",
-      "as_of": "2026-03-31",
-      "source": "DART 1차 공시(삼성전자 2026 1분기보고서, 제58기 1분기말, 연결 CFS, fnlttSinglAcntAll API) — 현금및현금성자산(별도 단기금융상품 74,048,085,000,000 보유: 광의 순현금 ≈119조)",
-      "confidence": "high"
-    },
-    "short_term_financial_instruments": {
-      "value": 74048085000000,
-      "currency": "KRW",
-      "as_of": "2026-03-31",
-      "source": "DART 1차 공시(삼성전자 2026 1분기보고서, 제58기 1분기말, 연결 CFS, fnlttSinglAcntAll API)",
-      "confidence": "high"
-    },
-    "total_assets": {
-      "value": 633339604000000,
-      "currency": "KRW",
-      "as_of": "2026-03-31",
-      "source": "DART 1차 공시(삼성전자 2026 1분기보고서, 제58기 1분기말, 연결 CFS, fnlttSinglAcntAll API)",
-      "confidence": "high"
-    },
-    "total_liabilities": {
-      "value": 146703628000000,
-      "currency": "KRW",
-      "as_of": "2026-03-31",
-      "source": "DART 1차 공시(삼성전자 2026 1분기보고서, 제58기 1분기말, 연결 CFS, fnlttSinglAcntAll API)",
-      "confidence": "high"
-    },
-    "total_equity": {
-      "value": 486635976000000,
-      "currency": "KRW",
-      "as_of": "2026-03-31",
-      "source": "DART 1차 공시(삼성전자 2026 1분기보고서, 제58기 1분기말, 연결 CFS, fnlttSinglAcntAll API)",
-      "confidence": "high"
-    },
-    "net_cash_broad": {
-      "value": 119215042000000,
-      "currency": "KRW",
-      "as_of": "2026-03-31",
-      "source": "계산: 현금성 73,306,751 + 단기금융상품 74,048,085 − 총차입금 28,138,794 (백만원)",
-      "confidence": "high"
+      "value": 62600000000,
+      "currency": "USD",
+      "as_of": "2026-04-26",
+      "source": "10-Q(FY2027 Q1) — 현금$13.2B + 단기유가증권$37.1B + 주식형유가증권$30.2B 합산, NVIDIA IR 교차(현금+유가증권 합계 $62.6B)",
+      "confidence": "medium"
     }
   },
+
   "valuation": {
     "pe": {
-      "value": 24.27,
-      "as_of": "2026-06-10",
-      "source": "stockanalysis.com (TTM)",
-      "confidence": "low"
-    },
-    "pb": {
-      "value": 4.73,
-      "as_of": "2026-06-10",
-      "source": "계산값 = 302,500 / BPS 63,997(FnGuide계열 보도)",
-      "confidence": "low"
+      "value": 31.42,
+      "as_of": "2026-06-12",
+      "source": "financecharts.com — 2026-06-12 기준 trailing PE",
+      "confidence": "medium"
     },
     "ps": {
-      "value": null,
-      "as_of": null,
-      "source": null,
-      "confidence": "unavailable"
+      "value": 22.59,
+      "as_of": "2026-06-12",
+      "source": "WebSearch(stockanalysis.com 기반) — 2026-06-12",
+      "confidence": "medium"
     },
     "ev_ebitda": {
-      "value": null,
-      "as_of": null,
-      "source": null,
-      "confidence": "unavailable"
+      "value": 30.27,
+      "as_of": "2026-06-11",
+      "source": "financecharts.com + WebSearch 교차 — 2026-06-11 기준",
+      "confidence": "medium"
     }
   },
+
   "technicals_ref": {
     "indicators_file": "_workspace/00_indicators.json",
     "ohlcv_file": "_workspace/00_ohlcv_daily.csv",
     "generated": true
   },
+
   "data_quality": {
-    "unavailable_fields": [
-      "valuation.ps",
-      "valuation.ev_ebitda"
-    ],
+    "unavailable_fields": [],
     "conflicts": [
       {
         "field": "market_cap",
-        "chosen": 1986385339565000,
-        "alternative": [
-          {
-            "value": 1922150000000000,
-            "source": "stockanalysis.com (1,922.15T)"
-          },
-          {
-            "value": 2045780000000000,
-            "source": "investing.com (2,045.78T)"
-          },
-          {
-            "value": 1805859221375000,
-            "source": "보통주 한정 계산값 302,500 × 5,969,782,550"
-          }
-        ],
-        "reason": "스킬 지침에 따라 yfinance fast_info를 1차 후보로 채택. fast_info 시총은 price×총상장주식수(보통주+우선주). 보통주 한정 시총(1,806T)과 출처별 시총이 상이 — 우선주(005935) 포함 여부·기준일 차이에서 발생."
+        "chosen": 4969907049133,
+        "chosen_source": "yfinance fast_info (2026-06-12)",
+        "alternative": 5040000000000,
+        "alternative_source": "WebSearch(capital.com, 2026-06-09 기준 $5.04T)",
+        "reason": "yfinance 값이 2026-06-12 종가 기준으로 더 최신. 웹 출처 $5.04T는 2026-06-09 기준으로 날짜 차이에 의한 정상 괴리."
       },
       {
-        "field": "shares_outstanding",
-        "chosen": 6566563106,
-        "alternative": [
-          {
-            "value": 5969782550,
-            "source": "보통주(005930) 한정 발행주식수"
-          }
-        ],
-        "reason": "채택값은 fast_info의 총 상장주식수(보통주+우선주 ~822.9M주). 한국 보통주 한정 시총 계산에는 5,969,782,550주를 써야 함. market_cap 채택값과 정합성 유지를 위해 총주식수 채택."
+        "field": "price.as_of",
+        "chosen": "2026-06-13",
+        "chosen_source": "WebSearch(June 13 종가 $205.19 확인)",
+        "alternative": "2026-06-12",
+        "alternative_source": "yfinance last_date(2026-06-12, 지연 반영)",
+        "reason": "두 날짜 모두 $205.19로 값 동일. 분석 시점 2026-06-14 기준 최신 거래일은 2026-06-13이므로 해당 날짜 채택."
       },
       {
-        "field": "valuation.pe",
-        "chosen": 24.27,
-        "alternative": [
-          {
-            "value": 7.3,
-            "source": "삼성증권 등 2026E 추정 PER(포워드)"
-          },
-          {
-            "value": 45.8,
-            "source": "계산값 = 302,500 / EPS 6,605(FnGuide계열 보도, 트레일링 EPS)"
-          }
-        ],
-        "reason": "출처 간 PER 편차 큼: TTM(24.27) vs 포워드 추정(7.3) vs 보도 EPS 기반 계산(45.8). Q1 2026 순이익 급증(약 47조)으로 트레일링·포워드 괴리 큼. 트레일링 기준(stockanalysis) 채택하되 신뢰도 low."
-      },
-      {
-        "field": "valuation.pb",
-        "chosen": 4.73,
-        "alternative": [
-          {
-            "value": 5.03,
-            "source": "FnGuide계열 보도 PBR"
-          },
-          {
-            "value": 2.1,
-            "source": "증권사 2026E 추정 PBR 밴드(포워드)"
-          }
-        ],
-        "reason": "보도 BPS 63,997원으로 계산 시 4.73, 보도 PBR은 5.03(BPS 기준일 상이 추정), 증권사 포워드 추정은 2.1 수준. 편차 큼 — low 신뢰도."
+        "field": "financials.cash_and_equivalents",
+        "chosen": 62600000000,
+        "chosen_source": "NVIDIA IR(현금+유가증권 합산)",
+        "alternative": 13237000000,
+        "alternative_source": "10-Q 현금성자산만(현금 및 현금성자산 한정)",
+        "reason": "현금+단기유가증권+주식형유가증권 합산($62.6B)이 유동성 실질을 반영. 협의의 현금성자산($13.2B)은 notes에 병기."
       }
     ],
-    "notes": "DART OpenAPI 키(API_K_DART) 미설정으로 분기보고서 직접 조회 불가 → 재무는 삼성전자 실적발표·언론 보도 기준(연결, FY2026 Q1)이며 total_debt·cash는 미확보. 환율·KOSPI 레벨은 WebSearch 단일 출처라 medium. OHLCV/기술지표는 스크립트 정상 생성(244행, last_close 2026-06-10 302,500). 주의: 00_indicators.json의 returns_pct(1y +410%)·SMA200 대비(+96.8%)는 yfinance 무상증자/액면분할 미보정 가능성 있어 technical-analyst가 액면·주식수 변동 이력 확인 권장. [오케스트레이터 검증 2026-06-11] OHLCV 연속성 확인: 일간 ±30% 점프 0건, 월별 종가 연속 상승(6.97만→30.25만). returns_pct.1y +410%는 분할/증자 아티팩트가 아니라 실제 1년 랠리. 기술지표 유효. 현재가는 52주고점 36.05만 대비 -16%. [DART 반영 2026-06-11] API_K_DART 키 등록 후 1분기보고서(제58기 1분기말) 연결 재무를 1차 공시값으로 갱신: total_debt 28.14조·cash 73.31조·단기금융상품 74.05조·순이익 47.23조(확정)·매출 133.87조·영업이익 57.23조 모두 high. 광의 순현금 ≈119조(분석가 보도근사 100조보다 큼, 방향 확증). 자산633.34/부채146.70/자본486.64조 추가."
+    "notes": [
+      "yfinance last_date는 2026-06-12로 표시되나 종가 $205.19는 WebSearch(2026-06-13 거래일 종가)와 일치 확인.",
+      "S&P500·NASDAQ 지수는 2026-06-12 종가. 2026-06-14 장중·종가는 미반영(수집 시점 기준).",
+      "현금성자산 협의 정의($13.2B 현금+현금성자산만): financials.cash_and_equivalents는 광의(현금+유가증권 $62.6B) 채택.",
+      "NVIDIA 회계연도는 1월 말 결산(FY2027 = 2026-02~2027-01). Q1 FY2027 기간: 2026-01-27~2026-04-26.",
+      "PE 31.42는 trailing GAAP 기준. 포워드 PE는 약 20.61(WebSearch, 2026-06-14 기준)으로 별도 참고.",
+      "EV/EBITDA 30.27은 2026-06-11 기준; 당일 $205.19 주가 적용 시 소폭 변동 가능.",
+      "스크립트 52주 고저: high_52w $235.74 / low_52w $141.97 (yfinance, 2026-06-12 기준). fast_info year_high $236.54 / year_low $142.03 — 소폭 상충(캘린더 기준 vs 252거래일 롤링 차이로 추정)."
+    ]
   }
 }
