@@ -1,0 +1,7 @@
+{
+  "_readme": "보유 현황 SSOT — portfolio-risk-analyst와 portfolio-manager가 읽는다. 갱신 경로: 사용자 '보유 등록/갱신' 요청 또는 '체결 반영' 시 오케스트레이터가 갱신. 스키마는 .claude/skills/portfolio-risk/SKILL.md 참조. holdings가 비어 있으면 포트폴리오 영향 분석은 강등 모드(신규 캠페인 꼬리 검산만)로 동작한다.",
+  "as_of": null,
+  "base_currency": "KRW",
+  "cash_pct": null,
+  "holdings": []
+}
