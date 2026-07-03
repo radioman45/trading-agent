@@ -6,9 +6,12 @@ Bull·Bear·Fact-checker·data-collector가 공통으로 사용하는 데이터 
 
 `_workspace_ipo/00_ipo_snapshot.json`이 존재하면, 그 안에 고정된 값은 **단일 진실 소스**다. 모든 에이전트는 다음 항목을 스냅샷 값으로만 사용한다(직접 찾은 다른 값으로 대체 금지):
 
-- 주가(`price`), 시가총액(`market_cap`), 발행주식수(`shares_outstanding`)
-- 환율(`fx`), 벤치마크 지수 레벨(`benchmark`)
-- 재무 핵심값(`financials`: 매출·영업이익·순이익·부채·현금), 밸류에이션 배수(`valuation`: P/E·P/S·EV/EBITDA)
+- 공모가(`listing.ipo_price` — 밴드/확정), 발행 신주(`listing.shares_offered_new`), 상장후 주식수(`post_ipo_shares.total`)
+- 공모가 기준 시총(`valuation.market_cap_at_ipo`), 유통물량(`free_float` 4필드: base/with_overallotment/reported_claim + reconciliation)
+- 락업·오버행(`lockup`: 주체별 락업 물량·해제일·rule144), 세그먼트 재무(`segment_financials`)
+- 환율(`fx.USDKRW`), 한국 IPO면 `kr_ipo`(공모가 밴드/확정가·수요예측 경쟁률·의무보유확약·청약 구조·상장일 가격범위)
+
+(2차 시장의 주가·PER·P/S·EV/EBITDA 같은 거래 멀티플은 IPO 스냅샷에 없다 — 거래 이력이 없기 때문. 스키마 전체는 `.claude/skills/ipo-snapshot/SKILL.md` 참조.)
 
 스냅샷에 **없는** 항목(세그먼트별 매출, 정성 정보, 업종 동향 등)만 직접 수집한다. 스냅샷의 `confidence: "unavailable"` 필드는 "그 값은 미확보"라는 신호이므로 추측으로 메우지 말고 미확보로 다룬다.
 
@@ -31,7 +34,7 @@ Bull·Bear·Fact-checker·data-collector가 공통으로 사용하는 데이터 
 
 - **SEC EDGAR** (1차, 무료): 10-K(연간), 10-Q(분기), 8-K(수시), DEF 14A(위임장). `database-lookup` 스킬이 SEC EDGAR API를 지원한다. 사업 내용·재무제표·리스크 요인(Item 1A)의 원천.
 - **IPO(신규상장)**: S-1 > S-1/A > FWP > 424B(최종 투자설명서)를 **최신 제출일순**으로 — 문서 우선순위·source_status 규칙은 `.claude/skills/ipo-snapshot/SKILL.md` 참조.
-- **재무 데이터**: 웹 검색으로 매출/이익/마진/부채 추이, P/E·P/S·EV/EBITDA 등 밸류에이션 배수. 가능하면 회사 IR 자료와 교차 확인.
+- **재무 데이터**: 웹 검색으로 매출/이익/마진/부채 추이, **비교기업(comps)의** P/E·P/S·EV/EBITDA 등 밸류에이션 배수(대상 IPO 기업 자체엔 거래 멀티플이 없다 — comps·공모가 기준 환산만). 가능하면 회사 IR 자료와 교차 확인.
 - **뉴스·촉매**: WebSearch로 최근 실적 발표, 가이던스, 애널리스트 목표가, 규제·소송 동향.
 - **거시**: `database-lookup`의 FRED(금리·물가), Open Targets/FDA(바이오 기업) 등 도메인별 DB.
 

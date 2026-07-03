@@ -17,18 +17,19 @@ description: IPO(신규상장) 투자 분석 하네스 오케스트레이터 —
 
 | 상황 | 모드 | 행동 |
 |------|------|------|
-| `_workspace_ipo/` 없음 | **초기 실행** | 새로 생성, 1단계부터 전체 실행 |
+| `_workspace_ipo/` 없음 | **초기 실행** | 새로 생성, Phase 1부터 전체 실행 |
 | `_workspace_ipo/` 있음 + 새 대상/새 공시 | **새 실행** | 기존 `_workspace_ipo/`를 `_workspace_ipo_prev/`로 이동 후 처음부터 |
 | `_workspace_ipo/` 있음 + 부분 수정("강세론만 다시", "진입전략만 다시", "최신 공시로 스냅샷만") | **부분 재실행** | 해당 단계만 재호출, 하류 단계는 그 결과로 다시 흐름 |
 | "복기", "결과 반영", "그 IPO 어땠는지", "교훈 정리" | **복기 모드** | Phase R로 직행 — 파이프라인 재실행 없음 |
 
-부분 재실행 의존성: 보고서가 바뀌면 → 팩트체크 → 심판 → 판결검토 → 진입전략 → 전략검토를 순차 갱신. 심판만 바뀌면 → 판결검토 → 진입전략 → 전략검토. "진입전략만 다시"면 진입전략 → 전략검토. **스냅샷(`00_ipo_snapshot.json`)이 갱신되면** 그 위의 모든 분석이 무효 → Bull/Bear부터 전체 하류 재실행.
+부분 재실행 의존성: 보고서가 바뀌면 → 팩트체크 → 심판 → 판결검토 → 진입전략 → 전략검토를 순차 갱신. 심판만 바뀌면 → 판결검토 → 진입전략 → 전략검토. "진입전략만 다시"면 진입전략 → 전략검토. **스냅샷(`00_ipo_snapshot.json`)이 갱신되면** 그 위의 모든 분석이 무효 → Bull/Bear부터 전체 하류 재실행. **부분 재실행 후 Phase 6 재진입:** 재실행으로 판정(BUY/HOLD/SELL·확신도) 또는 채택 진입 계획이 바뀌었으면 Phase 6을 재진입한다 — reports/에 갱신 파일 재복사 + 저널에 정정 항목 1건 append(기존 항목은 본문 수정 금지, 그 `결과:` 줄에 `[대체됨 → {날짜} 정정 항목]` 기입 — 복기·캘리브레이션은 최신 항목 기준) + decisions/ 커밋. 판정·계획이 그대로면 갱신 산출물만 재복사한다(스테일 저널·reports 방지).
 
 **Pending 자동 결산 (모든 모드 공통, 시작 시):** `decisions/journal.md`에 `결과: (미기록` 항목이 있으면, 해당 종목의 상장(거래 개시) 여부를 확인한다. 상장 후면 현재가·공모가·같은 기간 벤치마크 등락을 확인해 그 항목의 `결과:` 줄만 `결과: [중간점검 {YYYY-MM-DD}] 공모가 대비 {±X}%, 벤치마크 {±Y}% (알파 {±Z}%p)`로 갱신하고, 사용자에게 복기(Phase R)를 한 번 제안한다(강요 금지). 상장 전이면 건너뛴다.
 
 ## Phase 1: 입력 수집
 
 1. 분석 대상(회사/티커)과 **상장일·공모 정보**를 확인한다. 시드 노트(예: `docs/ipo/spcx-seed.txt`)가 있으면 요약해 넣되, 숫자는 "시드"로만 표기(1차 출처로 교차 예정).
+   - **현재 시각·세션 앵커 [HARD]:** 진행 전 현재 날짜·시각을 확인해 입력에 기록한다. 아직 발생하지 않은 일(미확정 공모가, 상장 전 거래가, 마감 안 된 세션 종가)을 *확정 사실*로 쓰지 않는다 — 모든 하류 에이전트가 이 앵커로 시점을 판정한다(할루시네이션 방지 — `docs/anti-hallucination-verification-plan.md`).
 2. 사용자 맥락(선택): 투자 기간, 리스크 허용도, 보유 목적. 없으면 보수/중립/공격 3성향 모두 산출.
 3. `_workspace_ipo/00_orchestrator_input.md`에 기록:
 
@@ -63,7 +64,9 @@ Agent(subagent_type="data-collector", model="sonnet",
 
 > 숫자 모순은 "잔여 리스크"로 하류에 넘기지 않는다 — IPO 전체 분석이 틀린 시총·유통물량 위에 세워지면 무의미하기 때문이다.
 
-## Phase 2: 1단계 — 강세·약세 병렬 분석 (격리, IPO 모드)
+> **시점 가드 추가 점검 [HARD] (2026-06-24 사고 반영):** audit 시 산술뿐 아니라 **시점**도 본다 — 스냅샷이 미확정 공모가·상장 전 거래가·마감 안 된 세션 수치를 `source_status:preliminary`/`unavailable` 없이 *확정값*으로 담았으면 ⛔. 출처가 이번 실행에서 실제 조회한 EDGAR/DART 문서인지(날조 의심 표본) 확인. 위반 시 data-collector 재호출.
+
+## Phase 2: 강세·약세 병렬 분석 (격리, IPO 모드)
 
 **bull-analyst와 bear-analyst를 동시에, 서로 격리하여 호출**한다(한 메시지에 함께, `run_in_background: true`). 각 호출에 `model: "opus"`.
 
@@ -76,7 +79,7 @@ Agent(subagent_type="bear-analyst", model="opus", run_in_background=true,
 
 두 보고서가 완성될 때까지 기다린 뒤 Phase 3으로.
 
-## Phase 3: 2단계 — 팩트체크 (공시 검증)
+## Phase 3: 팩트체크 (공시 검증)
 
 ```
 Agent(subagent_type="fact-checker", model="opus",
@@ -85,7 +88,7 @@ Agent(subagent_type="fact-checker", model="opus",
 
 검증 흐름은 선형(Bull/Bear에 되돌려 재작성 안 함). 단 fact-checker가 `⛔스냅샷 오류`를 보고하면 오케스트레이터가 data-collector를 1회 재호출해 스냅샷 갱신 → Bull/Bear부터 하류 재실행.
 
-## Phase 4: 3단계 — 심판 (IPO 판정)
+## Phase 4: 심판 (IPO 판정)
 
 ```
 Agent(subagent_type="investment-judge", model="opus",
@@ -127,9 +130,11 @@ Agent(subagent_type="verdict-reviewer", model="opus",
    - `판결검토_{회사}.md` ← `03b_verdict_review.md`
    - `IPO진입전략_{회사}.md` ← `03c_ipo_entry_plan.md`
    - `전략검토_{회사}.md` ← `03d_execution_review.md`
-2. **의사결정 저널 기록:** `decisions/journal.md`에 이번 판정을 1건 append한다(파일 상단의 항목 포맷 준수 — 판정·확신도(정의)·공모 기준·크럭스·핵심 논거·채택 진입 계획(게이트/비중/잠재 손실)·가설훼손 체크포인트·잔여 리스크·`결과: (미기록 — 복기 시 갱신)`). **기존 항목은 수정 금지(append-only)** — 후향적 정당화를 막는 장치다.
+2. **의사결정 저널 기록:** `decisions/journal.md`에 이번 판정을 1건 append한다(파일 상단의 항목 포맷 준수 — 판정·확신도(정의)·공모 기준·크럭스·핵심 논거·채택 진입 계획(게이트/비중/잠재 손실)·`실행: (미체결)`·가설훼손 체크포인트·잔여 리스크·`결과: (미기록 — 복기 시 갱신)`). **기존 항목은 수정 금지(append-only)** — 후향적 정당화를 막는 장치다.
+   - **학습 코퍼스 자동 커밋 [중요]:** 저널 기록 직후 `git add decisions/ && git commit -m "저널: {회사} IPO {판정} 기록"`으로 커밋한다. 학습 코퍼스(journal·lessons)는 이 하네스가 과거로부터 배우는 유일한 축적 자산인데, 무커밋 상태로 방치하면 단일 실패점(작업공간 유실 시 학습 전부 소실)이 된다.
 3. `_workspace_ipo/`는 **삭제하지 않고 보존**(작업 원본·감사 추적·부분 재실행용). `00_ipo_snapshot.json`도 보존.
 4. 사용자 요약 보고: 최종 판정(BUY/HOLD/SELL + 확신도 + 정의), 핵심 강세/약세 1줄씩, 팩트체크가 바꾼 것(특히 free_float 갭 규명 결과), **판결 검토 결과**(적정성 + 재작성 여부 + 잔여 지적), **IPO 진입전략 핵심**(실행 게이트 결과 + 성향별 1차 구간 유효성 + 잠재 손실/진입 보류 게이트 + 가설훼손 요지 + 전략 검토 결과), 저널 기록 완료, 산출물 경로.
+   - **오케스트레이터 레드플래그 자가점검 [HARD] (보고 전):** 핵심 정량 주장 중계 전 — 🚩"오늘/어제/내일/방금" 날짜 수치(시점 확인) 🚩미확정 공모가·상장 전 거래가를 확정처럼 단정 🚩"방증한다"류 단정(관측 vs 가정) — 을 점검하고, 검증 불가하면 **"미확인"으로 명시**해 전달한다. 외부 산출(MP3 등) 생성 후엔 파일 mtime·크기로 실제 갱신을 확인한다(도구 'ok' ≠ 실제 반영).
 5. **쉬운 해설판 (표준 산출물 — 입문자용, 생략 금지):** 요약 보고 후 report-explainer를 호출해 IPO 판정을 투자 입문자용 companion 문서로 충실히 옮긴다. 전문 리포트 7종은 그대로 보존되고, 이건 그 위에 얹는 쉬운 번역본이다.
    ```
    # 충실 번역(결론·수치 보존이 생명, 저부하 산출) → sonnet
@@ -146,7 +151,7 @@ Agent(subagent_type="verdict-reviewer", model="opus",
      ```
      완성본을 `reports/{회사}_IPO_{YYYY-MM-DD}/팟캐스트대본_{회사}.md`로 복사.
    - **오디오 (① 선택 시):** notebooklm-audio 스킬을 따른다 — `--check-only` 사전 점검(코드 2=미인증·3=미설치면 오디오 생략 + 설정 안내, 대본은 보존). 통과 시 번들 스크립트로 생성: `--out "reports/{회사}_IPO_{YYYY-MM-DD}/팟캐스트_{회사}.mp3" --source _workspace_ipo/03_judge_verdict.md --source _workspace_ipo/04_podcast_script.md --format debate --language ko --instructions "{대본의 NotebookLM 생성 지침을 그대로}"`. 실패 시 1회 재시도, 재실패면 대본만 산출물로 보고.
-7. Phase 7 진화: "결과나 팀 구성에서 고치고 싶은 점이 있나요?"를 한 번 묻는다(강요 금지).
+7. 진화: "결과나 팀 구성에서 고치고 싶은 점이 있나요?"를 한 번 묻는다(강요 금지).
 
 ## Phase R: 복기 모드 (별도 진입 — 학습 루프)
 
@@ -156,6 +161,8 @@ Agent(subagent_type="verdict-reviewer", model="opus",
 Agent(subagent_type="verdict-reviewer", model="opus",
       prompt="decisions/journal.md에서 복기 대상 판정을 찾고(사용자 미지정 시 `결과:` 미기록 항목을 제시해 확인), .claude/skills/ipo-reflection/SKILL.md 방법론으로 복기하라. 상장 후 가격 전개·같은 기간 벤치마크를 수집해 공모가 대비·기준 진입가 대비 수익률과 알파를 산출하고, 4축 대조(논거·크럭스 적중 / 반증·가설훼손 작동 / 진입 설계 적합 / 누락 변수) 후 journal의 해당 항목 `결과:` 줄만 갱신하고, 일반화 가능한 교훈만 decisions/lessons.md에 append하라(1회 관찰은 '가설' 등급). 결과론 금지 — 평가 대상은 결과가 아니라 당시 정보 기준의 의사결정 품질이다.")
 ```
+
+복기가 journal `결과:` 줄 갱신 + lessons append + calibration.md 1행 추가를 마치면, **커밋 전 세 파일의 실제 갱신을 확인**한다(누락 시 1회 보완 지시 — 복기 완료분이 캘리브레이션 대장에 0행으로 남았던 실측 누락의 재발 방지). 그 후 **학습 코퍼스 자동 커밋 [중요]:** `git add decisions/ && git commit -m "복기: {회사} IPO {판정} 결과 반영"`으로 커밋한다 — 무커밋 방치는 유일한 축적 자산(학습 코퍼스)의 단일 실패점이다.
 
 복기 결과(수익률·알파·의사결정 품질 평가·새 교훈)를 사용자에게 요약 보고한다. 이 교훈은 다음 실행에서 전 판단 에이전트가 읽는다.
 
@@ -168,13 +175,13 @@ Agent(subagent_type="verdict-reviewer", model="opus",
 | 입력 | 오케스트레이터 | `00_orchestrator_input.md` | 전원 |
 | 1.5 | data-collector | `00_ipo_snapshot.json` | bull, bear, fact-checker, judge, verdict-reviewer, execution-strategist |
 | 1.6 | 오케스트레이터 | (audit, 파일 없음 — self_check 게이트) | — |
-| 1 | bull-analyst | `01_bull_report.md` | fact-checker, judge, verdict-reviewer |
-| 1 | bear-analyst | `01_bear_report.md` | fact-checker, judge, verdict-reviewer |
-| 2 | fact-checker | `02_factchecker_annotations.md` | judge, verdict-reviewer |
-| 3 | investment-judge | `03_judge_verdict.md` | verdict-reviewer, execution-strategist, 사용자 |
-| 3.5 | verdict-reviewer (Part A) | `03b_verdict_review.md` | 오케스트레이터(재작성 루프), execution-strategist, 사용자 |
-| 3.7 | execution-strategist | `03c_ipo_entry_plan.md` | verdict-reviewer(Part B), 사용자 |
-| 3.9 | verdict-reviewer (Part B) | `03d_execution_review.md` | 오케스트레이터(재작성 루프), 사용자 |
+| 2 | bull-analyst | `01_bull_report.md` | fact-checker, judge, verdict-reviewer |
+| 2 | bear-analyst | `01_bear_report.md` | fact-checker, judge, verdict-reviewer |
+| 3 | fact-checker | `02_factchecker_annotations.md` | judge, verdict-reviewer |
+| 4 | investment-judge | `03_judge_verdict.md` | verdict-reviewer, execution-strategist, 사용자 |
+| 4.5 | verdict-reviewer (Part A) | `03b_verdict_review.md` | 오케스트레이터(재작성 루프), execution-strategist, 사용자 |
+| 4.7 | execution-strategist | `03c_ipo_entry_plan.md` | verdict-reviewer(Part B), 사용자 |
+| 4.8 | verdict-reviewer (Part B) | `03d_execution_review.md` | 오케스트레이터(재작성 루프), 사용자 |
 | 6 | 오케스트레이터 | `decisions/journal.md` (append) | Phase 0 pending 결산, Phase R 복기 |
 | R | verdict-reviewer (복기) | `journal.md` 결과 줄 갱신 + `decisions/lessons.md` (append) | 차기 실행의 전 판단 에이전트 |
 | 6 해설(표준 — 입문자용) | report-explainer | `05_plain_explanation.md` → `reports/.../쉬운해설_{회사}.md` | 사용자 |
@@ -186,6 +193,7 @@ Agent(subagent_type="verdict-reviewer", model="opus",
 
 - **스냅샷 숫자 모순(Phase 1.6):** ⛔하드 실패 → data-collector 재수집(최대 3회). 산술이 안 맞는 분석은 무의미하므로 잔여 리스크로 넘기지 않는다.
 - **에이전트 실패:** 1회 재시도. 재실패 시 그 산출물 없이 진행하고 최종 보고에 누락 명시(예: 약세 부재 시 심판이 "한쪽 관점 부재로 신뢰도 제한").
+- **Bull·Bear 양측 모두 실패:** 양측 모두 재시도 후에도 실패 시, 빈 입력으로 하류(팩트체크·심판)를 진행하지 말고 **파이프라인을 중단**한다. 스냅샷을 재확인한 뒤 사용자에게 상황을 보고한다 — 양측 관점이 모두 없으면 판정 자체가 성립하지 않기 때문이다.
 - **데이터 미확보:** 삭제·추측 금지. "미확보"/"검증불가"로 표기해 하류 전달. 상장 전 미확정 값은 "preliminary"로.
 - **상충 데이터:** 어느 쪽도 지우지 않는다. 상위 문서값 채택 + 출처 병기.
 - **접근 차단:** `insane-search` 우회 → 실패 시 미확보 표기.
@@ -202,7 +210,7 @@ Agent(subagent_type="verdict-reviewer", model="opus",
 
 **진입전략 재작성 흐름:** 전략가가 한국 투자자 접근성 게이트를 누락하고 "상장일 일괄매수"를 제시 → Phase 4.8 Part B가 'IPO 실행 게이트'·분할 정합성을 ⛔치명으로 잡음 → execution-strategist 1회 재호출 → 게이트 + 분할로 정정.
 
-**진입전략만 재실행:** "공격형 비중 더 보수적으로, 진입전략만 다시" → Phase 0(부분 재실행) → execution-strategist만 피드백과 재호출 → Phase 4.8 → `03c`/`03d` 갱신 → 보고.
+**진입전략만 재실행:** "공격형 비중 더 보수적으로, 진입전략만 다시" → Phase 0(부분 재실행) → execution-strategist만 피드백과 재호출 → Phase 4.8 → `03c`/`03d` 갱신 → 채택 진입 계획이 바뀌었으므로 Phase 6 재진입(reports/ 재복사 + 저널 정정 항목 append + decisions/ 커밋) → 보고.
 
 **최신 공시로 스냅샷 갱신:** "최종 투자설명서 나왔으니 스냅샷부터 다시" → 부분 재실행이지만 스냅샷은 최상류 → data-collector 재호출(424B, source_status:final) → Phase 1.6 → Bull/Bear부터 전체 하류 재실행.
 
