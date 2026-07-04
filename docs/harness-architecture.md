@@ -1,6 +1,6 @@
 # Trading Agent — 3하네스 전체 구조 다이어그램
 
-작성: 2026-07-04 (독립 검증 2라운드 완료 시점). 규칙 상세는 각 오케스트레이터 스킬(`trading-strategy` / `ipo-analysis` / `filings-analysis`)이 SSOT — 이 문서는 구조 조감도다.
+작성: 2026-07-04 (독립 검증 2라운드 완료 시점) · 갱신: 2026-07-04 (codex 리뷰 선별 반영 — harness doctor·판정 4분류·검증/포트폴리오 모드 라벨). 규칙 상세는 각 오케스트레이터 스킬(`trading-strategy` / `ipo-analysis` / `filings-analysis`)이 SSOT — 이 문서는 구조 조감도다.
 
 ## 하네스 1: 투자전략 트레이딩 (trading-strategy)
 
@@ -18,7 +18,7 @@ flowchart TB
   P1 --> MS
   P1 --> MDE
 
-  MS --> G16{"Phase 1.6 사실 검증 게이트<br/>fact-checker (sonnet) → 00_factcheck.md<br/>시점·산술·출처·SSOT충돌"}
+  MS --> G16{"Phase 1.6 사실 검증 게이트 [DEGRADED — 정정 1회]<br/>fact-checker (sonnet) → 00_factcheck.md<br/>시점·산술·출처·SSOT충돌<br/>재실패 시 '미확인' 강등 → 검증 모드 DEGRADED_DATA"}
   MDE --> G16
   G16 -->|"⛔ 발견: 소스 1회 재호출"| MS
 
@@ -39,13 +39,15 @@ flowchart TB
   TR --> P5
   subgraph P5["Phase 5 병렬·상호 격리"]
     RD["risk-debater ×3 (공격 ∥ 중립 ∥ 보수)<br/>05_risk_*.md"]
-    PRA["portfolio-risk-analyst (opus)<br/>05_portfolio_impact.md — 보유 북 영향"]
+    PRA["portfolio-risk-analyst (opus)<br/>05_portfolio_impact.md — 보유 북 영향<br/>모드: PORTFOLIO_AWARE / SINGLE_TRADE_ONLY / PORTFOLIO_STALE"]
   end
 
-  P5 --> PM["Phase 6 portfolio-manager 최종 게이트 (opus)<br/>06_final_decision.md + journal append<br/>거시·역발상·포트폴리오·기회비용 게이트"]
+  P5 --> PM["Phase 6 portfolio-manager 최종 게이트 (opus)<br/>APPROVE / CONDITIONAL_APPROVE / REVISE / REJECT<br/>06_final_decision.md — 판정 요약 박스(검증·포트폴리오 모드) + 경고 대장<br/>+ journal append · 거시·역발상·포트폴리오·기회비용 게이트"]
   PM -->|"REVISE (1회): trader/RM 재작성<br/>+ 비중 변경 시 PRA 재계산"| TR
   PM --> P7["Phase 7: reports/ 복사 + decisions/ 커밋 + 요약 보고"]
-  P7 --> EXP["report-explainer (sonnet)<br/>08_plain → 쉬운해설 (표준 산출물)"]
+  P7 --> DOC{"harness doctor --harness trading [DEGRADED — 사후·정정 1회]<br/>09_doctor.json → 닥터리포트 보존<br/>산출물 존재·산술·판정-게이트 모순·모드 정합"}
+  DOC -->|"라벨 모순 FAIL: PM 1회 재호출<br/>케이스별 처방(⛔+승인 = REVISE 해소 마커 또는 REVISE/REJECT,<br/>미스라벨 = 라벨만 정정) + 저널 정정 append"| PM
+  DOC --> EXP["report-explainer (sonnet)<br/>08_plain → 쉬운해설 (표준 산출물)"]
   EXP --> POD["팟캐스트 (선택 — 반드시 묻기)<br/>podcast-producer (sonnet) + notebooklm-audio"]
 ```
 
@@ -68,7 +70,7 @@ flowchart TB
   U2["사용자: {회사} IPO/공모주 분석"] --> Q0["Phase 0: 모드 판정 + pending 결산"]
   Q0 --> Q1["Phase 1: 입력·세션 앵커<br/>00_orchestrator_input.md"]
   Q1 --> DC["Phase 1.5 data-collector (sonnet)<br/>00_ipo_snapshot.json — 공모가·주식수·free float·락업 SSOT"]
-  DC --> A16{"Phase 1.6 스냅샷 audit<br/>self_check ⛔하드 게이트 (최대 3회) + 시점 가드"}
+  DC --> A16{"Phase 1.6 스냅샷 audit [DEGRADED — 수복 3회]<br/>self_check + 시점 가드<br/>3회 후 FAIL 필드는 unavailable 강등·진행"}
   A16 -->|FAIL| DC
 
   A16 -->|PASS| Q2
@@ -80,12 +82,12 @@ flowchart TB
   Q2 --> FC2["Phase 3 fact-checker (opus)<br/>02_factchecker_annotations.md — 공시 대조·상충 매트릭스"]
   FC2 -->|"⛔스냅샷 오류"| DC
   FC2 --> JD["Phase 4 investment-judge (opus)<br/>03_judge_verdict.md — BUY/HOLD/SELL + 확신도(상장 후 12개월 벤치마크 초과수익 확률)"]
-  JD --> VR1{"Phase 4.5 verdict-reviewer Part A<br/>판결 red-team (재작성 루프 1회)"}
+  JD --> VR1{"Phase 4.5 verdict-reviewer Part A<br/>판결 red-team (재작성 루프 1회)<br/>재작성 시 변경 수치 재검증 — SSOT 대조·EV 산술 스팟체크"}
   VR1 -->|"⛔치명: 재작성"| JD
   VR1 --> ES["Phase 4.7 execution-strategist (opus)<br/>03c_ipo_entry_plan.md — 실행 게이트·이벤트 분할·가설훼손·리스크 한도"]
-  ES --> VR2{"Phase 4.8 verdict-reviewer Part B<br/>전략 red-team (재작성 루프 1회)"}
+  ES --> VR2{"Phase 4.8 verdict-reviewer Part B<br/>전략 red-team (재작성 루프 1회)<br/>재작성 시 변경 수치 재검증 — 비중·잠재손실·비대칭비 스팟체크"}
   VR2 -->|"⛔치명: 재작성"| ES
-  VR2 --> Q6["Phase 6: reports/ 7종 복사 + journal append + decisions/ 커밋<br/>+ 쉬운해설 (report-explainer) + 팟캐스트 (선택)"]
+  VR2 --> Q6["Phase 6: reports/ 7종 복사 + journal append + decisions/ 커밋<br/>+ harness doctor --harness ipo [DEGRADED — 사후·수복 1회] → 닥터리포트<br/>+ 쉬운해설 (report-explainer) + 팟캐스트 (선택)"]
   Q6 -.->|"부분 재실행으로 판정/계획 변경 시 Phase 6 재진입<br/>(저널 정정 항목 + reports 재복사)"| Q6
   Q6 -.-> QR["Phase R 복기 — verdict-reviewer (ipo-reflection)<br/>journal 결과 확정 + lessons + calibration<br/>커밋 전 3파일 갱신 확인 게이트"]
 ```
@@ -97,7 +99,7 @@ flowchart TB
 ```mermaid
 flowchart TB
   U3["사용자: 공시 원문 제공 (10-K/10-Q·DART 보고서)"] --> D0["D0 filings-archivist (opus)<br/>00_filings_facts.json — 사실 SSOT 고정"]
-  D0 --> D06{"D0.6 disclosure-auditor 추출 게이트<br/>수치·단위·기간·산술·출처 (⛔ 시 재작성)"}
+  D0 --> D06{"D0.6 disclosure-auditor 추출 게이트 [DEGRADED — 1회 수복 후 강등·진행]<br/>수치·단위·기간·산술·출처 (⛔ 시 재작성)"}
   D06 -->|"⛔"| D0
 
   D06 -->|PASS| D1
@@ -114,7 +116,8 @@ flowchart TB
   D3 --> D35{"D3.5 disclosure-auditor 종합 red-team<br/>과대해석·상충 누락·단정 (⛔ 시 재작성)"}
   D35 -->|"⛔"| D3
   D35 --> D4["D4 report-explainer (sonnet)<br/>04_plain — 쉬운해설 ('다음 공시에서 확인할 것')"]
-  D4 --> PODF["[선택] podcast-producer<br/>갈등 축 = 렌즈 상충 (매매 발언 금지)"]
+  D4 --> P6F["Phase 6: reports/ 복사<br/>+ harness doctor --harness filings [DEGRADED — 사후·수복 1회]<br/>필수 산출물 + 매매언어 경계 휴리스틱 → 닥터리포트"]
+  P6F --> PODF["[선택] podcast-producer<br/>갈등 축 = 렌즈 상충 (매매 발언 금지)"]
 ```
 
 ## 공용 자산 · 학습 루프 (트레이딩 + IPO)
@@ -129,7 +132,7 @@ flowchart LR
   subgraph DEC["decisions/ — 공용 학습 코퍼스 (append-only·커밋 의무)"]
     J["journal.md<br/>전 판정 기록 (REVISE·최종 쌍 = 1결정)"]
     LS["lessons.md<br/>일반화 교훈"]
-    CAL["calibration.md<br/>확신도 p vs 결과 o · Brier·버킷"]
+    CAL["calibration.md<br/>확신도 p vs 결과 o · Brier·버킷<br/>지평·확정 트리거 컬럼 (만기 전 조기 확정 금지)"]
     PF["portfolio.json<br/>보유 SSOT"]
     WL["watchlist.md"]
   end
@@ -146,6 +149,7 @@ flowchart LR
     PP["podcast-producer + podcast-script·notebooklm-audio<br/>(팟캐스트 — 3하네스, 사용자 동의 시만)"]
     FCX["fact-checker (2모드: IPO 검증 / 트레이딩 L0·L1 게이트)"]
     CC["contrarian-check 스킬<br/>(역발상 메타인지 — L0·L3·L5)"]
+    HD["scripts/harness_doctor.py<br/>(기계 검증 — 3하네스 공용, 사후 DEGRADED·수복 1회<br/>결정적 불변조건만 — LLM 게이트 대체 아님·보완)"]
   end
 ```
 
