@@ -128,10 +128,85 @@ class Doctor:
             return
 
         for field in ("as_of", "market_session"):
+            if field == "market_session" and _dig(snap, "session", "market_session"):
+                # v1.1: 세션 앵커가 session 블록으로 이전 — 최상위 필드를 요구하지 않는다(허위 WARN 방지)
+                self.add("snapshot:market_session", OK,
+                         f"session.market_session = {_dig(snap, 'session', 'market_session')}")
+                continue
             if not snap.get(field):
                 self.add(f"snapshot:{field}", WARN, f"스냅샷에 {field} 없음 — 시점·세션 앵커 약화")
             else:
                 self.add(f"snapshot:{field}", OK, f"{field} = {snap[field]}")
+
+        # v1.1+ 스키마: session 블록(수집 레이어 기계 판정) 필수. 발동 조건은 schema_version 라벨(LLM 작성)만이
+        # 아니라 기계 산출(00_indicators.json의 session 존재)도 본다 — 라벨을 1.0으로 적어 옵트아웃하는 구멍 차단
+        ver_raw = str(snap.get("schema_version", "1.0"))
+        try:
+            ver = tuple(int(x) for x in ver_raw.split("."))
+        except ValueError:
+            self.add("snapshot:schema", WARN,
+                     f"schema_version 파싱 불가('{ver_raw}') — v1.1로 간주하고 검사(fail-safe)")
+            ver = (1, 1)
+        ind = {}
+        ind_raw = self.read("00_indicators.json")
+        if ind_raw:
+            try:
+                ind = json.loads(ind_raw)
+            except json.JSONDecodeError:
+                ind = {}
+        ind_sess = ind.get("session") or {}
+        sess = snap.get("session") or {}
+
+        # 기계 산출(00_indicators.json) 부재의 가시화 — 파일 하나 없다고 기계 검증 레이어가 조용히 꺼지지 않게
+        if not ind:
+            if sess and str(sess.get("calendar_status", "")) == "manual":
+                self.add("snapshot:session.machine", WARN,
+                         "session 블록 수동 작성(calendar_status:manual) — 수집 스크립트 실패 경로. 복사 충실성·교차 검증 미수행")
+            elif sess:
+                self.add("snapshot:session.machine", FAIL,
+                         "스냅샷에 session 블록이 있는데 00_indicators.json 부재/파싱 불가 — 기계 산출 없이 session 자기선언"
+                         " (수동 작성이면 calendar_status:'manual' 표기 필요)")
+            else:
+                self.add("snapshot:machine", WARN,
+                         "00_indicators.json 부재/파싱 불가 — 기계 검증 레이어(session 복사 충실성·cross_check) 비활성")
+
+        if ver >= (1, 1) or ind_sess:
+            missing = [k for k in ("market_session", "data_as_of", "requested_at_utc") if not sess.get(k)]
+            if missing:
+                basis = f"schema {ver_raw}" if ver >= (1, 1) else "00_indicators.json에 기계 session 블록 존재"
+                self.add("snapshot:session", FAIL,
+                         f"{basis}인데 스냅샷 session 블록 불완전 — 누락: {', '.join(missing)}")
+            else:
+                self.add("snapshot:session", OK,
+                         f"session 블록 OK ({sess['market_session']}, data_as_of={sess['data_as_of']})")
+            # 신선도 경고는 기계값(ind_sess) 우선으로 발동 — LLM이 필드를 생략해도 무력화되지 않게
+            fresh = ind_sess if ind_sess else sess
+            if fresh.get("anomaly"):
+                self.add("snapshot:session.anomaly", FAIL,
+                         f"수집 스크립트가 이상 상태를 보고: {fresh['anomaly']} — 데이터·판정 시각 정합 확인 전 사용 금지")
+            if fresh.get("last_close_is_final") is False:
+                self.add("snapshot:session.final", WARN,
+                         "last_close_is_final=false — 마지막 행이 미확정 세션 값. price가 직전 확정 종가인지 확인")
+            if fresh.get("stale_feed_suspect") is True:
+                self.add("snapshot:session.stale", WARN,
+                         "stale_feed_suspect=true — 예상 최종 거래일보다 데이터가 뒤처짐(휴장일 가능성 포함, 원인 확인)")
+            if fresh.get("intraday_data_gap") is True:
+                self.add("snapshot:session.gap", WARN,
+                         "intraday_data_gap=true — 장중 세션인데 당일 봉 없음(평일 휴장 또는 피드 미갱신). 세션 서술 확인")
+            # '기계값 그대로 복사 [HARD]' 충실성 — 데이터 사실 필드 불일치는 FAIL, 판정 시각 의존 필드는 WARN
+            if ind_sess and sess:
+                for k, sev in (("data_as_of", FAIL), ("last_close_is_final", FAIL),
+                               ("stale_feed_suspect", FAIL), ("intraday_data_gap", FAIL),
+                               ("market_session", WARN), ("requested_at_utc", WARN)):
+                    if k in ind_sess and k in sess and sess[k] != ind_sess[k]:
+                        self.add(f"snapshot:session.copy.{k}", sev,
+                                 f"session.{k}가 기계값과 불일치 — 스냅샷 {sess[k]!r} vs 00_indicators.json {ind_sess[k]!r}"
+                                 " (그대로 복사 규칙 위반 또는 부분 재실행 후 미복사)")
+                # 기계값이 존재하는 신선도 필드를 스냅샷에서 생략하는 우회 차단 (생략=복사 위반)
+                for k in ("last_close_is_final", "stale_feed_suspect", "intraday_data_gap", "anomaly"):
+                    if ind_sess.get(k) is not None and k not in sess:
+                        self.add(f"snapshot:session.copy.{k}", FAIL,
+                                 f"기계 session.{k}가 존재하는데 스냅샷에서 생략 — 전체 복사 규칙 위반")
 
         price = _num(_dig(snap, "price", "value"))
         if price is None:
@@ -176,6 +251,31 @@ class Doctor:
             age = (date.today() - as_of).days
             if age > 3:
                 self.add("snapshot:freshness", INFO, f"스냅샷 as_of가 {age}일 전 — 재실행 시 갱신 필요")
+
+        # 이중 소스 교차(수집 스크립트 cross_check) ↔ 결정문 DEGRADED_DATA 정합
+        if ind:
+            xc = ind.get("cross_check") or {}
+            status = str(xc.get("status", ""))
+            if status == "mismatch":
+                decision = self.read("06_final_decision.md") or ""
+                if "DEGRADED_DATA" not in decision:
+                    # risk-gate ①이 mismatch→DEGRADED_DATA를 하드룰로 선언하므로 여기도 FAIL(라벨 모순 — 정정 루프 대상)
+                    self.add("snapshot:xcheck", FAIL,
+                             f"이중 소스 종가 불일치(diff {xc.get('diff_pct')}% > 허용 {xc.get('tolerance_pct')}%)"
+                             " — 결정문에 DEGRADED_DATA 표기 없음 (risk-gate ① 위반)")
+                else:
+                    self.add("snapshot:xcheck", OK, "이중 소스 불일치가 DEGRADED_DATA로 표기됨")
+            elif status == "match":
+                self.add("snapshot:xcheck", OK,
+                         f"이중 소스 종가 일치 ({xc.get('secondary')}, diff {xc.get('diff_pct')}%)")
+            elif status == "skipped_primary_is_fallback":
+                self.add("snapshot:xcheck", WARN,
+                         "1차 소스가 폴백(stooq) — 이중 소스 교차 없음(가장 미검증 경로). "
+                         "스냅샷 price.confidence ≤ medium + 웹 교차 여부 확인")
+            elif status.startswith("skipped_error"):
+                self.add("snapshot:xcheck", INFO, f"이중 소스 교차 미수행: {status[:100]}")
+            elif status.startswith("skipped"):
+                self.add("snapshot:xcheck", INFO, f"이중 소스 교차 스킵: {status} (의도된 경로 — 감사 표기)")
 
     # ── 4·5. 최종 결정 ↔ 게이트·모드 정합 (trading) ────────────────
     def check_trading_decision(self):

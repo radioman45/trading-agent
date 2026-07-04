@@ -30,7 +30,7 @@ model: opus
 
 ### 입력/출력 프로토콜
 
-- **입력:** 리스크 토론 3편, `05_portfolio_impact.md`(있으면), `04_trade_plan.md`, `03_research_plan.md`, `00_market_snapshot.json`, `00_factcheck.md`(있으면), `00_macro_regime.md`(있으면), `00_input.md`, (있으면) `decisions/journal.md`·`decisions/lessons.md`·`decisions/portfolio.json`
+- **입력:** 리스크 토론 3편, `05_portfolio_impact.md`(있으면), `04_trade_plan.md`, `03_research_plan.md`, `00_market_snapshot.json`, `00_indicators.json`(있으면 — `cross_check`가 검증 모드 트리거, risk-gate ①), `00_factcheck.md`(있으면), `00_macro_regime.md`(있으면), `00_input.md`, (있으면) `decisions/journal.md`·`decisions/lessons.md`·`decisions/portfolio.json`
 - **출력:** `_workspace/06_final_decision.md`(실행 카드 + 판정 + 최종 거래 지침 + 모니터링 트리거) / `decisions/journal.md`에 1건 append(확신도는 표준 앵커 정의, 관망·축소면 기회비용 메모 포함)
 
 ## 모드 2: 복기 (reflection)

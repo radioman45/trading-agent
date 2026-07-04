@@ -29,7 +29,8 @@ model: sonnet
 1. **시점 가드 [HARD]:** `{as_of}`·현재 시각 기준 **이미 마감된 세션의 종가만** `close`로 고정한다. 미개장/장중이면 종가·일등락률을 단정하지 말고 `confidence: "unavailable"` 또는 직전 마감일 값 + `as_of` 명시. 한국·미국 세션을 같은 날짜로 혼동하지 않는다(각 `source`에 거래일 표기).
 2. **산술 자가검산 [HARD]:** 등락률=`(종가/전일종가)-1`, 시총=`가격×발행주식수`, 비중 합 ≤100% 등을 저장 전 검산. 항등식 불일치 수치는 폐기·재수집.
 3. **출처 실재성 [HARD]:** 모든 `source`는 이번 실행에서 실제 조회한 것. 기억 인용 금지. 못 구하면 `unavailable`.
-4. **세션 상태 필드:** 스냅샷에 `market_session`(예: "KR 개장 전"/"마감")과 각 핵심 수치의 거래일을 남겨 하류가 시점을 오해하지 않게 한다.
+4. **세션 블록은 기계값 복사 [HARD] (2026-07-04, codex R4):** 수집 스크립트가 `00_indicators.json`에 남긴 `session` 블록을 **모든 필드 그대로**(market_session·data_as_of·last_close_is_final·staleness·requested_at_utc 등 블록 전체 — 서브셋 금지) 스냅샷 최상위 `session`으로 복사한다 — 세션을 스스로 재판정하거나 기계값과 다른 세션 서술을 하지 않는다(doctor가 불일치를 FAIL로 잡는다). `last_close_is_final: false`면 그 값은 확정 종가가 아니다(직전 확정 종가 채택). `stale_feed_suspect: true` 또는 `intraday_data_gap: true`(장중인데 당일 봉 없음 — 평일 휴장/피드 미갱신 의심)면 원인을 웹으로 확인해 `data_quality.notes`에 남긴다.
+5. **이중 소스 교차 처리:** 스크립트 `cross_check`가 `mismatch`면 원인 규명 전 값 채택 금지 — 채택값·대안값을 `data_quality.conflicts[]`에 기록하고 `price.confidence`는 최대 `"medium"`(최종 결정문 검증 모드 `DEGRADED_DATA` 트리거 — risk-gate ①). `skipped_primary_is_fallback`(yfinance 실패로 Stooq 단일 소스 폴백)이면 2차 교차가 없는 상태다 — `price.confidence` 최대 `"medium"` + 웹 시세 교차로 보강하고, `fast_info`가 비므로 시총·주식수는 웹 출처로 채운다. 한국 종목(`skipped_kr`)은 네이버 증권·KRX 교차가 2차 소스 역할을 한다.
 
 저장 직전 위 항목을 "작성 전 검증 체크리스트"와 함께 통과시킨다.
 
@@ -48,7 +49,7 @@ model: sonnet
 
 ## 에러 핸들링
 
-- 스크립트가 실패(`status: error`)하면 1회 재시도(한국 코드는 `.KS`/`.KQ` 접미사 자동 시도됨). 그래도 실패하면 **구조화 폴백을 순서대로** 시도한다: ① Stooq CSV(`https://stooq.com/q/d/l/?s={티커}&i=d` — 미국 티커는 `.us` 접미사)로 OHLCV 확보 ② 한국 종목은 `korean-stock-search` 스킬(KRX 기반)로 시세·기본 정보 확보. 폴백 산출도 출처·시점을 남기고, yfinance 스키마와 필드가 다르면 매핑을 `data_quality.notes`에 기록한다. 전부 실패하면 웹 검색으로 시세만 수집해 스냅샷을 채우고, `data_quality.notes`에 "OHLCV/기술지표 미생성"을 명시한다.
+- 스크립트가 실패(`status: error`)하면 1회 재시도(한국 코드는 `.KS`/`.KQ` 접미사 자동 시도, **미국 티커는 스크립트가 Stooq 1차 폴백까지 자동 수행** — `source_primary`에 사유 기록됨). 재시도도 실패하면: 한국 종목은 `korean-stock-search` 스킬(KRX 기반)로 시세·기본 정보 확보. 폴백 산출도 출처·시점을 남기고, yfinance 스키마와 필드가 다르면 매핑을 `data_quality.notes`에 기록한다. 전부 실패하면 웹 검색으로 시세만 수집해 스냅샷을 채우고, `data_quality.notes`에 "OHLCV/기술지표 미생성"을 명시한다(이때 `session` 블록은 수동 작성 + `calendar_status: "manual"`).
 - 웹/DB 접근이 막히면 `insane-search` 우회를 시도하고, 안 되면 해당 필드를 미확보로 표기하고 진행한다.
 - 추측으로 채우는 것은 어떤 경우에도 금지다.
 

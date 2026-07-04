@@ -80,11 +80,12 @@ description: 투자전략 트레이딩 하네스 오케스트레이터(TradingAg
 `00_macro_regime.md`와 `00_market_snapshot.json`을 독립 검증자로 점검한다(저부하 → sonnet):
 ```
 Agent(subagent_type="fact-checker", model="sonnet",
-      prompt="검증 모드. _workspace/00_macro_regime.md·00_market_snapshot.json과 00_input.md의 현재시각·세션 앵커를 읽고 다음만 점검해 _workspace/00_factcheck.md에 결함 목록을 작성하라(분석·의견 금지):
-      ① 시점 가드: 미개장/장중 세션의 종가·등락률을 관측사실로 단정한 곳(특히 '오늘/어제/내일/방금' 날짜) — 앵커 기준 마감 안 된 세션 수치는 ⛔.
+      prompt="검증 모드. _workspace/00_macro_regime.md·00_market_snapshot.json·00_indicators.json(session·cross_check 기계값)과 00_input.md의 현재시각·세션 앵커를 읽고 다음만 점검해 _workspace/00_factcheck.md에 결함 목록을 작성하라(분석·의견 금지):
+      ① 시점 가드: 스냅샷 session 블록(스크립트 기계 판정 — market_session·data_as_of·last_close_is_final)을 1차 앵커로, 미개장/장중 세션의 종가·등락률을 관측사실로 단정한 곳(특히 '오늘/어제/내일/방금' 날짜) — 기계값과 모순되는 세션 서술, 마감 안 된 세션 수치는 ⛔.
       ② 산술 정합: 등락률 vs 레벨(신규≈직전×(1+chg)), 시총=가격×주식수, 비중합≤100% 불일치 ⛔.
       ③ 출처 실재성: [출처] 표기 중 검증 불가·날조 의심 표본 점검.
       ④ SSOT 충돌: macro의 지수/가격 수치가 스냅샷과 모순되면 ⛔.
+      ⑤ 수집 레이어 정합: 00_indicators.json에 session 블록이 있는데(또는 스냅샷 schema 1.1인데) 스냅샷 session 누락·기계값 불일치 ⛔ / cross_check가 mismatch인데 스냅샷 conflicts 미기재·confidence 미강등 ⚠️ / source_primary가 Stooq 폴백인데 confidence 미강등 ⚠️ / stale_feed_suspect 또는 intraday_data_gap=true인데 원인 미기재 ⚠️.
       각 항목 심각도(⛔치명/⚠️경고)와 위치를 명시. 치명 0건이면 'PASS'.")
 ```
 - **PASS(⛔ 0건):** Phase 2로 진행.
@@ -143,7 +144,7 @@ Agent(subagent_type="portfolio-risk-analyst", model="opus", prompt="decisions/po
 ## Phase 6: 최종 게이트 + 저널
 
 ```
-Agent(subagent_type="portfolio-manager", prompt="리스크 3편·05_portfolio_impact.md·04_trade_plan.md·03_research_plan.md·스냅샷·00_factcheck.md(있으면 — 강등 수치 확인용)·00_macro_regime.md(있으면)·00_input.md(+있으면 decisions/journal.md·lessons.md·portfolio.json)를 읽고 risk-gate 스킬 Part B 게이트로 _workspace/06_final_decision.md 작성(상단 판정 요약 박스 — 검증·포트폴리오 모드 포함 — + 실행 카드 5줄 의무) + decisions/journal.md에 1건 append")
+Agent(subagent_type="portfolio-manager", prompt="리스크 3편·05_portfolio_impact.md·04_trade_plan.md·03_research_plan.md·스냅샷·00_indicators.json(cross_check — 검증 모드 트리거 확인용)·00_factcheck.md(있으면 — 강등 수치 확인용)·00_macro_regime.md(있으면)·00_input.md(+있으면 decisions/journal.md·lessons.md·portfolio.json)를 읽고 risk-gate 스킬 Part B 게이트로 _workspace/06_final_decision.md 작성(상단 판정 요약 박스 — 검증·포트폴리오 모드 포함 — + 실행 카드 5줄 의무) + decisions/journal.md에 1건 append")
 ```
 
 **REVISE 루프 (생성-검증, 최대 1회):** 판정이 REVISE면 지시 대상(트레이더 또는 리서치 매니저)을 1회 재호출해 해당 산출물을 수정하게 한다. 수정으로 **비중이 바뀌었으면 portfolio-risk-analyst를 1회 재호출**해 `05_portfolio_impact.md`의 편입 후 스냅샷만 재계산시킨다(보유·변동성 재수집 불필요 — 에이전트의 재호출 지침 참조. 이걸 건너뛰면 PM이 옛 비중 기준의 스테일 수치로 재점검하게 된다). 그 후 portfolio-manager가 해소 여부만 재점검해 최종 판정한다(미해소면 REJECT). 재REVISE 금지 — 무한 루프 방지.
@@ -151,7 +152,7 @@ Agent(subagent_type="portfolio-manager", prompt="리스크 3편·05_portfolio_im
 ## Phase 7: 산출물 정리 + 보고
 
 1. 완성본을 `reports/{회사}_{YYYY-MM-DD}/`에 복사: `거시레짐_{날짜}.md`(00_macro_regime, 있으면), `팩트체크_{날짜}.md`(00_factcheck, 있으면), 분석가 4편, 토론 4편, `투자계획_{회사}.md`(03), `거래계획_{회사}.md`(04), 리스크 3편, `포트폴리오영향_{회사}.md`(05_portfolio_impact, 있으면), `최종결정_{회사}.md`(06).
-   - **기계 검증 (harness doctor) [등급: DEGRADED — 사후 검증·정정 1회]:** `python scripts/harness_doctor.py --harness trading`을 실행하고 결과(`_workspace/09_doctor.json`)를 `reports/{회사}_{날짜}/닥터리포트_{날짜}.json`으로 복사한다. **라벨 모순 FAIL**이면 portfolio-manager를 1회 재호출해 정정한다 — **케이스별 처방이 다르다:** ⓐ ⛔치명+승인(fatal-vs-approve)은 단순 라벨 플립으로 해소 금지 — 해당 ⛔가 실제 해소된 경우에만 결정문에 `REVISE 해소: {지시 요지} → {해소 확인}` 줄(risk-gate 마커 규칙)을 기입하고, 미해소면 판정 자체를 REVISE/REJECT로 정정한다. ⓑ 조건부인데 일반 APPROVE(conditional-mislabel)·모드 미스라벨은 결정문 라벨·모드 표기만 정정한다(내용 불변). 어느 케이스든 저널에 이미 기록됐으면 기존 항목 본문은 수정 금지, 정정 항목을 append(IPO 하네스 Phase 6 재진입 규칙과 동형). 정정 후 doctor 재실행으로 해소 확인. 그 외 FAIL·미해소 건은 **요약 보고 최상단에 명시**한다(FAIL 방치 + `FULLY_VERIFIED` 표기 금지 — 라벨은 기계 검증과 일치해야 한다). 판정·저널 확정 후에 도는 사후 검증이므로 BLOCKING이 아니다 — doctor는 결정적 불변조건(산출물 존재·산술·라벨 정합)만 보고, LLM 게이트(fact-checker 등)를 대체하지 않고 보완한다.
+   - **기계 검증 (harness doctor) [등급: DEGRADED — 사후 검증·정정 1회]:** `python scripts/harness_doctor.py --harness trading`을 실행하고 결과(`_workspace/09_doctor.json`)를 `reports/{회사}_{날짜}/닥터리포트_{날짜}.json`으로 복사한다. **라벨 모순 FAIL**이면 portfolio-manager를 1회 재호출해 정정한다 — **케이스별 처방이 다르다:** ⓐ ⛔치명+승인(fatal-vs-approve)은 단순 라벨 플립으로 해소 금지 — 해당 ⛔가 실제 해소된 경우에만 결정문에 `REVISE 해소: {지시 요지} → {해소 확인}` 줄(risk-gate 마커 규칙)을 기입하고, 미해소면 판정 자체를 REVISE/REJECT로 정정한다. ⓑ 조건부인데 일반 APPROVE(conditional-mislabel)·모드 미스라벨(검증 모드 — 예: cross_check mismatch인데 DEGRADED_DATA 미표기 — 포함)은 결정문 라벨·모드 표기만 정정한다(내용 불변 — 단 검증 모드 정정으로 load-bearing 강등이 드러나면 risk-gate ①의 일반 APPROVE 금지 규칙을 적용해 판정도 재점검). 어느 케이스든 저널에 이미 기록됐으면 기존 항목 본문은 수정 금지, 정정 항목을 append(IPO 하네스 Phase 6 재진입 규칙과 동형). 정정 후 doctor 재실행으로 해소 확인. 그 외 FAIL·미해소 건은 **요약 보고 최상단에 명시**한다(FAIL 방치 + `FULLY_VERIFIED` 표기 금지 — 라벨은 기계 검증과 일치해야 한다). 판정·저널 확정 후에 도는 사후 검증이므로 BLOCKING이 아니다 — doctor는 결정적 불변조건(산출물 존재·산술·라벨 정합)만 보고, LLM 게이트(fact-checker 등)를 대체하지 않고 보완한다.
 2. `_workspace/`는 보존한다(감사 추적·부분 재실행용).
    - **학습 코퍼스 커밋 [HARD]:** 저널 기록 직후 `git add decisions/ && git commit -m "저널: {티커} {판정} 기록"`을 실행한다. 저널·교훈·캘리브레이션은 이 시스템의 유일한 축적 자산인데 무커밋 상태는 단일 실패점이다(Edit 실수 한 번에 복구 불가). 커밋 실패(권한 등) 시 보고에 명시하고 계속한다.
 3. 사용자 요약 보고: **거시 레짐 한 줄(risk-on/off·바벨 기울기) + 최종 판정(APPROVE/CONDITIONAL_APPROVE/REVISE/REJECT + 검증·포트폴리오 모드, doctor FAIL 있으면 최상단 명시) + 방향·확신도 + 채택 거래 계획 1줄(진입/손절/비중/목표) + 토론에서 살아남은 핵심 논거 + 수용한 잔여 리스크 + 산출물 경로**. 면책: 이 산출물은 투자 참고 자료이며 투자 결정의 책임은 사용자에게 있음을 1줄 명시.
