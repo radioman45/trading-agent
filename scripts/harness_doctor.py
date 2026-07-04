@@ -229,8 +229,9 @@ class Doctor:
                      "결정문에 검증 모드(FULLY_VERIFIED/DEGRADED_DATA) 표기 없음 — 구 템플릿 실행분")
 
         # 팩트체크 강등 → DEGRADED_DATA 표기 정합
+        # 강등 서술은 여러 줄에 걸칠 수 있어 두 토큰을 파일 전역에서 독립 검색한다(WARN 등급 휴리스틱).
         factcheck = self.read("00_factcheck.md")
-        if factcheck and re.search(r"미확인.*강등|강등.*미확인", factcheck):
+        if factcheck and "미확인" in factcheck and "강등" in factcheck:
             if "DEGRADED_DATA" not in decision:
                 self.add("decision:degraded-label", WARN,
                          "팩트체크에 '미확인' 강등 흔적이 있는데 결정문에 DEGRADED_DATA 표기 없음")
