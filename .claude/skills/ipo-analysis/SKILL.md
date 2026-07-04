@@ -55,7 +55,9 @@ Agent(subagent_type="data-collector", model="sonnet",
       prompt="_workspace_ipo/00_orchestrator_input.md를 읽고, .claude/skills/ipo-snapshot/SKILL.md 방법론으로 _workspace_ipo/00_ipo_snapshot.json을 작성하라. 이것은 IPO(상장 전/직후) 분석이다 — 거래가가 아니라 공모가·발행신주·상장후 주식수·시총·free_float(4필드 분리)·락업·지수편입·세그먼트 재무를 고정하라. EDGAR 최신 문서(424B>S-1/A>FWP) 우선, 상장 전 가격값은 source_status:preliminary. 저장 직전 self_check(시총=공모가×주식수, 조달=공모가×신주, free_float 재계산·갭)를 직접 계산해 채워라. 투자 판단·전망은 넣지 마라.")
 ```
 
-## Phase 1.6: 스냅샷 audit (숫자 정합성 — 하드 게이트)
+## Phase 1.6: 스냅샷 audit (숫자 정합성) [등급: DEGRADED — 수복 3회]
+
+> 등급 정직화(2026-07-04): 3회 수복 후에도 FAIL이면 해당 필드를 unavailable로 강등하고 진행하므로 이 게이트는 BLOCKING이 아니라 DEGRADED다(수복 횟수만 1회가 아니라 3회). 진짜 BLOCKING(파이프라인 중단)은 Bull·Bear 양측 실패다(에러 핸들링 참조).
 
 스냅샷의 `self_check.overall`을 확인한다.
 - **`PASS`** → Phase 2로 진행.
@@ -103,6 +105,7 @@ Agent(subagent_type="verdict-reviewer", model="opus",
 ```
 
 **재작성 루프(최대 1회):** "재작성 필요"(⛔치명≥1)면 investment-judge를 1회 재호출(검토서를 입력으로)해 `03_judge_verdict.md` 재작성, 재검토는 반복 안 함. "재작성 불필요"면 잔여 지적을 Phase 6에서 전달. 검토관이 1회 재시도 후에도 실패하면 검토 없이 진행하되 "판결 검토 미수행" 명시.
+- **재작성 후 변경 수치 재검증 (오케스트레이터 — 전면 재검토 아님):** 재작성이 일어났으면 오케스트레이터가 재작성본에서 **바뀐 정량 값만**(EV 표·확신도·진입 가치 구간) 골라 ① 스냅샷 SSOT와 대조 ② 산술 스팟체크(EV = Σ 확률×페이오프 재계산, 확률 합 = 100%)를 직접 수행한다. 불일치면 investment-judge에 해당 수치만 정정 지시(1회). red-team이 잡은 결함을 고치면서 **새로 들어온 숫자**는 아무도 검증하지 않는 구멍을 막는 것이다.
 
 ## Phase 4.7: 진입 전략 (IPO 타이밍 변환)
 
@@ -119,6 +122,7 @@ Agent(subagent_type="verdict-reviewer", model="opus",
 ```
 
 **재작성 루프(최대 1회):** Phase 4.5와 동일 패턴 — "재작성 필요"면 execution-strategist를 1회 재호출(`03d`를 입력으로)해 `03c_ipo_entry_plan.md` 수정, 재검토 없이 Phase 6으로. 검토관 실패 시 "전략 검토 미수행" 명시.
+- **재작성 후 변경 수치 재검증 (오케스트레이터):** Phase 4.5와 동일 — 재작성본에서 바뀐 정량 값만(비중 상한·잠재 손실 = 비중×하방 시나리오·비대칭비) 스냅샷·판결과 대조하고 산술 스팟체크. 불일치면 1회 정정 지시.
 
 ## Phase 6: 산출물 정리 및 보고
 
@@ -130,6 +134,7 @@ Agent(subagent_type="verdict-reviewer", model="opus",
    - `판결검토_{회사}.md` ← `03b_verdict_review.md`
    - `IPO진입전략_{회사}.md` ← `03c_ipo_entry_plan.md`
    - `전략검토_{회사}.md` ← `03d_execution_review.md`
+   - **기계 검증 (harness doctor) [등급: DEGRADED — 사후 검증·수복 1회]:** `python scripts/harness_doctor.py --harness ipo`를 실행하고 결과(`_workspace_ipo/09_doctor.json`)를 `reports/{회사}_IPO_{날짜}/닥터리포트_{날짜}.json`으로 복사한다. FAIL(필수 산출물 누락·self_check FAIL)이면 원인 산출자를 1회 재호출해 수복하고 doctor 재실행으로 확인, 미해소면 **요약 보고 최상단에 명시**한다. 판정·저널 확정 후 사후 검증이므로 BLOCKING이 아니다 — doctor는 결정적 불변조건만 보고, LLM 게이트(fact-checker·verdict-reviewer)를 대체하지 않고 보완한다.
 2. **의사결정 저널 기록:** `decisions/journal.md`에 이번 판정을 1건 append한다(파일 상단의 항목 포맷 준수 — 판정·확신도(정의)·공모 기준·크럭스·핵심 논거·채택 진입 계획(게이트/비중/잠재 손실)·`실행: (미체결)`·가설훼손 체크포인트·잔여 리스크·`결과: (미기록 — 복기 시 갱신)`). **기존 항목은 수정 금지(append-only)** — 후향적 정당화를 막는 장치다.
    - **학습 코퍼스 자동 커밋 [중요]:** 저널 기록 직후 `git add decisions/ && git commit -m "저널: {회사} IPO {판정} 기록"`으로 커밋한다. 학습 코퍼스(journal·lessons)는 이 하네스가 과거로부터 배우는 유일한 축적 자산인데, 무커밋 상태로 방치하면 단일 실패점(작업공간 유실 시 학습 전부 소실)이 된다.
 3. `_workspace_ipo/`는 **삭제하지 않고 보존**(작업 원본·감사 추적·부분 재실행용). `00_ipo_snapshot.json`도 보존.
@@ -183,6 +188,7 @@ Agent(subagent_type="verdict-reviewer", model="opus",
 | 4.7 | execution-strategist | `03c_ipo_entry_plan.md` | verdict-reviewer(Part B), 사용자 |
 | 4.8 | verdict-reviewer (Part B) | `03d_execution_review.md` | 오케스트레이터(재작성 루프), 사용자 |
 | 6 | 오케스트레이터 | `decisions/journal.md` (append) | Phase 0 pending 결산, Phase R 복기 |
+| 6 기계 검증 | `scripts/harness_doctor.py` (스크립트) | `09_doctor.json` → `reports/.../닥터리포트_{날짜}.json` | 오케스트레이터(보고 시 FAIL 명시), 사용자 |
 | R | verdict-reviewer (복기) | `journal.md` 결과 줄 갱신 + `decisions/lessons.md` (append) | 차기 실행의 전 판단 에이전트 |
 | 6 해설(표준 — 입문자용) | report-explainer | `05_plain_explanation.md` → `reports/.../쉬운해설_{회사}.md` | 사용자 |
 | 6 팟캐스트(선택 — 사용자 동의 시만) | podcast-producer | `04_podcast_script.md` → `reports/.../팟캐스트대본·팟캐스트.mp3` | 사용자, notebooklm-audio 스킬 |
