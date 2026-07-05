@@ -1,6 +1,6 @@
 # Trading Agent — 3하네스 전체 구조 다이어그램
 
-작성: 2026-07-04 (독립 검증 2라운드 완료 시점) · 갱신: 2026-07-05 (수집 레이어 기계 판정 — session 블록·이중 소스 교차·DEGRADED_DATA 체인 배선). 규칙 상세는 각 오케스트레이터 스킬(`trading-strategy` / `ipo-analysis` / `filings-analysis`)이 SSOT — 이 문서는 구조 조감도다.
+작성: 2026-07-04 (독립 검증 2라운드 완료 시점) · 갱신: 2026-07-05 (수집 레이어 기계 판정 — session 블록·이중 소스 교차·DEGRADED_DATA 체인 배선 + CRYPTO 시장 모드 — always_open 24/7·크립토 교차 체인). 규칙 상세는 각 오케스트레이터 스킬(`trading-strategy` / `ipo-analysis` / `filings-analysis`)이 SSOT — 이 문서는 구조 조감도다.
 
 ## 하네스 1: 투자전략 트레이딩 (trading-strategy)
 
@@ -9,11 +9,11 @@
 ```mermaid
 flowchart TB
   U["사용자: {티커} 트레이딩 분석"] --> P0["Phase 0: 모드 판정 + 워크스페이스 회전"]
-  P0 --> P1["Phase 1: 입력·세션 앵커·pending 결산·보유 확인<br/>00_input.md"]
+  P0 --> P1["Phase 1: 입력·세션 앵커·pending 결산·보유 확인<br/>(크립토) 매매 수단 확인 — 직접 티커 vs 현물 ETF<br/>00_input.md"]
 
   subgraph PAR1["Phase 1 병렬 (상호 독립)"]
     MS["L0 macro-strategist (opus)<br/>00_macro_regime.md — 레짐·바벨"]
-    MDE["L1 market-data-engineer (sonnet)<br/>00_market_snapshot.json·OHLCV·지표 (SSOT, v1.1)<br/>수집 스크립트가 session·cross_check 기계 판정<br/>(세션 LLM 재판정 금지 — 블록 전체 복사, Stooq 폴백 자동)"]
+    MDE["L1 market-data-engineer (sonnet)<br/>00_market_snapshot.json·OHLCV·지표 (SSOT, v1.1)<br/>시장 3종 자동 감지: KR · US · CRYPTO(always_open 24/7)<br/>수집 스크립트가 session·cross_check 기계 판정<br/>(세션 LLM 재판정 금지 — 블록 전체 복사, Stooq 폴백 자동·US만)<br/>교차: US stooq→nasdaq / CRYPTO coinbase→binance / KR 네이버·KRX(LLM)"]
   end
   P1 --> MS
   P1 --> MDE
