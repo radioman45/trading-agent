@@ -55,6 +55,7 @@ description: 투자전략 트레이딩 하네스 오케스트레이터(TradingAg
    ```markdown
    # 분석 입력
    - 대상: {회사명} ({티커}) / 분석 시점: {YYYY-MM-DD} / 시장: {US|KR|CRYPTO}
+   - (크립토면) 매매 수단: {직접 티커 | 현물 ETF {티커}} — 1번 확인 결과. 트레이더·리스크가 비용·세제 분기에 사용
    - 사용자 맥락: {성향/기간/보유 여부 또는 "일반 분석 — 3성향 분기"}
    - 보유 현황: {portfolio.json 요약 또는 "미등록"}
    ```
@@ -82,11 +83,11 @@ description: 투자전략 트레이딩 하네스 오케스트레이터(TradingAg
 ```
 Agent(subagent_type="fact-checker", model="sonnet",
       prompt="검증 모드. _workspace/00_macro_regime.md·00_market_snapshot.json·00_indicators.json(session·cross_check 기계값)과 00_input.md의 현재시각·세션 앵커를 읽고 다음만 점검해 _workspace/00_factcheck.md에 결함 목록을 작성하라(분석·의견 금지):
-      ① 시점 가드: 스냅샷 session 블록(스크립트 기계 판정 — market_session·data_as_of·last_close_is_final)을 1차 앵커로, 미개장/장중 세션의 종가·등락률을 관측사실로 단정한 곳(특히 '오늘/어제/내일/방금' 날짜) — 기계값과 모순되는 세션 서술, 마감 안 된 세션 수치는 ⛔.
+      ① 시점 가드: 스냅샷 session 블록(스크립트 기계 판정 — market_session·data_as_of·last_close_is_final)을 1차 앵커로, 미개장/장중 세션의 종가·등락률을 관측사실로 단정한 곳(특히 '오늘/어제/내일/방금' 날짜) — 기계값과 모순되는 세션 서술, 마감 안 된 세션 수치는 ⛔. (CRYPTO `always_open`은 당일 UTC 봉이 상시 미확정인 것이 정상 상태다 — 확정 종가 = 직전 UTC 마감 봉. 이를 '마감 안 된 세션 수치'로 오판해 ⛔하지 않는다. 크립토의 ⛔ 대상은 직전 UTC 마감 봉 종가와 모순되는 서술·미래 시점 수치다.)
       ② 산술 정합: 등락률 vs 레벨(신규≈직전×(1+chg)), 시총=가격×주식수, 비중합≤100% 불일치 ⛔.
       ③ 출처 실재성: [출처] 표기 중 검증 불가·날조 의심 표본 점검.
       ④ SSOT 충돌: macro의 지수/가격 수치가 스냅샷과 모순되면 ⛔.
-      ⑤ 수집 레이어 정합: 00_indicators.json에 session 블록이 있는데(또는 스냅샷 schema 1.1인데) 스냅샷 session 누락·기계값 불일치 ⛔ / cross_check가 mismatch인데 스냅샷 conflicts 미기재·confidence 미강등 ⚠️ / source_primary가 Stooq 폴백인데 confidence 미강등 ⚠️ / stale_feed_suspect 또는 intraday_data_gap=true인데 원인 미기재 ⚠️.
+      ⑤ 수집 레이어 정합: 00_indicators.json에 session 블록이 있는데(또는 스냅샷 schema 1.1인데) 스냅샷 session 누락·기계값 불일치 ⛔ / cross_check가 mismatch인데 스냅샷 conflicts 미기재·confidence 미강등 ⚠️ / cross_check가 `skipped_kr`·`skipped_crypto_quote`인데 스냅샷에 독립 웹 교차 기록(conflicts/notes의 네이버·KRX 또는 업비트·빗썸 대조)도 없음 ⚠️ / source_primary가 Stooq 폴백인데 confidence 미강등 ⚠️ / stale_feed_suspect 또는 intraday_data_gap=true인데 원인 미기재 ⚠️.
       각 항목 심각도(⛔치명/⚠️경고)와 위치를 명시. 치명 0건이면 'PASS'.")
 ```
 - **PASS(⛔ 0건):** Phase 2로 진행.
@@ -100,7 +101,7 @@ Agent(subagent_type="fact-checker", model="sonnet",
 ```
 # 향후 sonnet A/B 후보(현재는 품질 보호 위해 opus)
 Agent(subagent_type="fundamental-analyst", prompt="00_input.md·00_market_snapshot.json·00_macro_regime.md(있으면, 밸류 국면 배경)를 읽고 analyst-toolkit 스킬(+references/fundamental.md)로 _workspace/01_fundamental_report.md 작성. 스냅샷 market=CRYPTO면 재무제표 축을 대체하라: ①공급 구조(발행 일정·반감기·소각·스테이킹 비율) ②온체인 활동(활성 주소·거래량·해시레이트/검증자) ③수급(현물 ETF 순유입·거래소 잔고 추이·기관 보유) ④규제·제도 이벤트 — 각 항목 웹 출처 명시, 밸류에이션은 실현시총·MVRV 등 크립토 지표로")
-Agent(subagent_type="technical-analyst",   prompt="00_indicators.json·00_ohlcv_daily.csv·스냅샷·00_macro_regime.md(있으면)를 읽고 analyst-toolkit 스킬(+references/technical.md, 대형주·지수면 market-structure.md)로 _workspace/01_technical_report.md 작성. 지표 재계산 금지")
+Agent(subagent_type="technical-analyst",   prompt="00_indicators.json·00_ohlcv_daily.csv·스냅샷·00_macro_regime.md(있으면)를 읽고 analyst-toolkit 스킬(+references/technical.md, 대형주·지수면 market-structure.md)로 _workspace/01_technical_report.md 작성. 지표 재계산 금지. session.last_close_is_final=false면(크립토는 상시) 최신 지표에 미확정 진행 봉이 포함됨을 보고서 상단에 명시")
 Agent(subagent_type="news-analyst",        prompt="스냅샷·00_macro_regime.md(있으면, 거시는 종목 전이 경로로만)를 읽고 analyst-toolkit 스킬(+references/news.md)로 타임라인·이벤트 캘린더 포함 _workspace/01_news_report.md 작성")
 Agent(subagent_type="sentiment-analyst",   prompt="스냅샷·00_macro_regime.md(있으면)를 읽고 analyst-toolkit 스킬(+references/sentiment.md, market-structure.md)로 정량 심리·쏠림·시장구조 포지셔닝 판정 포함 _workspace/01_sentiment_report.md 작성")
 ```

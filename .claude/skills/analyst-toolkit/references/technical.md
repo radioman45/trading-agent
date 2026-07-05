@@ -12,6 +12,7 @@ market-data-engineer가 만든 `_workspace/00_indicators.json`이 SSOT다. **지
 - `atr14`, `atr14_pct_of_price` — 손절 폭 설계의 기준
 - `returns_pct.1w/1m/3m/6m/1y`, `max_drawdown_pct`, `pct_from_52w_high`
 - `volume.last_vs_avg20` — 거래량 확대/위축
+- `session.last_close_is_final` — **false면 마지막 봉이 미확정 진행 봉**이다(크립토 `always_open`은 UTC 당일 봉 미마감이라 **상시 false**). 이때 최신 지표값(RSI·MACD·ATR 등)이 봉 확정 시 바뀔 수 있음을 **보고서 상단에 1줄 명시**한다.
 
 ## 본문 필수 섹션 (§2 분석 본문)
 

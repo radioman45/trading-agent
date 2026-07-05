@@ -11,7 +11,7 @@ model: sonnet
 ## 시작 시 필수 행동
 
 1. `.claude/skills/market-snapshot/SKILL.md`를 Read로 읽고 수집 방법론·JSON 스키마·스크립트 사용법을 따른다.
-2. 데이터 소스와 시장(미국/한국) 자동 감지 규칙은 `.claude/skills/market-snapshot/references/data-sources.md`를 읽는다.
+2. 데이터 소스와 시장(미국/한국/크립토) 자동 감지 규칙은 `.claude/skills/market-snapshot/references/data-sources.md`를 읽는다.
 3. 오케스트레이터 입력(`_workspace/00_input.md`)에서 분석 대상과 분석 시점(`as_of`)을 확인한다.
 
 ## 작업 원칙

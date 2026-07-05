@@ -22,7 +22,10 @@
 | 알파벳 티커 (1~5자), NYSE/NASDAQ 언급 | **미국** | AAPL, NVDA, TSLA, MSFT |
 | 6자리 숫자 코드, KOSPI/KOSDAQ, 한글 회사명 | **한국** | 005930(삼성전자), 035720(카카오) |
 | 영문 회사명이지만 한국 기업 | **한국** | Samsung Electronics, Hyundai |
+| `{BASE}-{쿼트통화}` 표기(쿼트가 통화 코드), 코인·크립토 언급 | **크립토** | BTC-USD, ETH-USD, SOL-USDT (BRK-B류 미국 클래스 표기와 구분 — 수집 스크립트가 자동 판별) |
 | 판별 모호 | 웹 검색으로 상장 거래소 확인 후 결정 | - |
+
+크립토 데이터 소스: 스크립트(yfinance)가 시세 1차, 유통량·시총은 CoinGecko/CoinMarketCap 웹 교차 필수(fast_info가 null), 비달러 쿼트(BTC-KRW 등)의 2차 교차는 업비트·빗썸. 상세 규칙은 SKILL.md §2·§3.
 
 ## 2. 미국 주식 데이터 소스
 
