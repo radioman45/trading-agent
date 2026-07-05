@@ -57,7 +57,9 @@ flowchart TB
 flowchart LR
   S["Phase S 아이디어 스캔<br/>idea-scanner (opus): 레짐 → 후보·워치리스트"] --> WLF["decisions/watchlist.md"]
   M["Phase M 포지션 점검<br/>열린 결정의 무효화 트리거 모니터링"] --> JR["journal 결과: 줄 [중간점검]"]
-  P["Phase P 상태 갱신<br/>보유 등록·체결 반영"] --> PJ["decisions/portfolio.json + journal 실행: 줄 (동시 갱신)"]
+  P["Phase P 상태 갱신<br/>보유 등록(주수·valuation 우선)·체결 반영"] --> PJ["decisions/portfolio.json + journal 실행: 줄 (동시 갱신)"]
+  Q["Phase Q 포트폴리오 점검 (계좌 단위 — M과 구분)<br/>시세·지표 재평가(_portfolio/) → portfolio-risk-analyst 모드2 (opus)<br/>북 진단: 집중·RC·바벨 vs 레짐·동시 꼬리·계획-실행 드리프트·저널 외 보유"] --> QPM["portfolio-manager 모드3 (opus)<br/>10_portfolio_review — 리밸런싱 권고<br/>(개별 종목 확정 판단은 풀 파이프라인 회부)"]
+  QPM --> QJ["journal 점검 항목 (티커·실행:·결과: 줄 없음 — 결산·복기 비대상)<br/>+ reports/포트폴리오점검_{날짜}/"]
   R["Phase R 복기<br/>portfolio-manager (trade-reflection)"] --> LC["journal 결과 확정 + lessons + calibration 1행<br/>커밋 전 기입 확인 게이트"]
 ```
 
