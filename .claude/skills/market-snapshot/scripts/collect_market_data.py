@@ -69,8 +69,15 @@ def is_crypto_symbol(sym: str) -> bool:
             and any(c.isalpha() for c in base))
 
 
+def is_kr_new_code(base: str) -> bool:
+    """한국 신형 종목코드(6자 영숫자 — 숫자 시작 + 알파벳 포함, 예 0167A0 ETF·0500B0 ETN).
+    미국 티커는 숫자로 시작하지 않으므로 충돌 없음."""
+    return (len(base) == 6 and base.isalnum() and base[0].isdigit()
+            and not base.isdigit())
+
+
 def detect_market(ticker: str, resolved: str = "") -> str:
-    """티커 형태로 시장을 감지한다. .KS/.KQ 또는 6자리 숫자 = KR,
+    """티커 형태로 시장을 감지한다. .KS/.KQ, 6자리 숫자, 신형 영숫자 코드(0167A0류) = KR,
     {BASE}-{쿼트통화}(예 BTC-USD) = CRYPTO, 그 외 US."""
     sym = (resolved or ticker or "").upper()
     if sym.endswith(".KS") or sym.endswith(".KQ"):
@@ -78,7 +85,7 @@ def detect_market(ticker: str, resolved: str = "") -> str:
     if is_crypto_symbol(sym):
         return "CRYPTO"
     base = sym.split(".")[0]
-    if base.isdigit() and len(base) == 6:
+    if (base.isdigit() and len(base) == 6) or is_kr_new_code(base):
         return "KR"
     return "US"
 
@@ -330,11 +337,11 @@ def cross_check_close(df: pd.DataFrame, ticker: str, market: str,
 
 
 def fetch_ohlcv(ticker: str, period: str):
-    """yfinance로 OHLCV를 받는다. 한국 6자리 코드면 .KS → .KQ 순서로 시도."""
+    """yfinance로 OHLCV를 받는다. 한국 6자리 코드(신형 영숫자 포함)면 .KS → .KQ 순서로 시도."""
     import yfinance as yf
 
     candidates = [ticker]
-    if ticker.isdigit() and len(ticker) == 6:
+    if (ticker.isdigit() and len(ticker) == 6) or is_kr_new_code(ticker.upper()):
         candidates = [f"{ticker}.KS", f"{ticker}.KQ"]
 
     last_err = None
@@ -487,10 +494,11 @@ def main():
 
     if args.from_csv and not args.market:
         # 시장 미해소 상태에서 US 디폴트로 세션을 오판하지 않는다 (KR CSV 재계산 오라벨 방지).
-        # 티커가 있어도 확신 신호(KR: .KS/.KQ/6자리, US: 1~5자 알파벳)가 없으면 --market을 요구한다
+        # 티커가 있어도 확신 신호(KR: .KS/.KQ/6자리/신형 영숫자, US: 1~5자 알파벳)가 없으면 --market을 요구한다
         t = (args.ticker or "").upper()
         base = t.split(".")[0]
-        positive_kr = t.endswith((".KS", ".KQ")) or (base.isdigit() and len(base) == 6)
+        positive_kr = (t.endswith((".KS", ".KQ")) or (base.isdigit() and len(base) == 6)
+                       or is_kr_new_code(base))
         positive_crypto = is_crypto_symbol(t)
         positive_us = (not positive_crypto) and base.isalpha() and 1 <= len(base) <= 5
         if not (positive_kr or positive_us or positive_crypto):

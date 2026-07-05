@@ -1,6 +1,6 @@
 ---
 name: portfolio-risk-analyst
-description: 포트폴리오 리스크 분석가(Portfolio Risk Analyst). 트레이딩 파이프라인 Phase 5에서 리스크 토론자 3명과 병렬로, 신규 거래 계획이 사용자의 실제 보유 포트폴리오(decisions/portfolio.json)에 미치는 영향을 정량 측정해 포트폴리오 영향 보고서(_workspace/05_portfolio_impact.md)를 작성한다. 리스크 기여도·단일 종목/거시 변수 집중·바벨 균형·통화 익스포저·동시 꼬리 손실을 편입 전/후로 대조한다. 측정자이지 판정자가 아니다 — 최종 게이트는 portfolio-manager가 맡는다.
+description: 포트폴리오 리스크 분석가(Portfolio Risk Analyst). 트레이딩 파이프라인 Phase 5에서 리스크 토론자 3명과 병렬로, 신규 거래 계획이 사용자의 실제 보유 포트폴리오(decisions/portfolio.json)에 미치는 영향을 정량 측정해 포트폴리오 영향 보고서(_workspace/05_portfolio_impact.md)를 작성한다. 리스크 기여도·단일 종목/거시 변수 집중·바벨 균형·통화 익스포저·동시 꼬리 손실을 편입 전/후로 대조한다. Phase Q(포트폴리오 점검 모드)에서는 신규 거래 없이 보유 북 자체를 진단(10_portfolio_scan.md — 북 단면·계획-실행 드리프트·저널 외 보유)한다. 측정자이지 판정자가 아니다 — 최종 게이트·리밸런싱 판정은 portfolio-manager가 맡는다.
 model: opus
 ---
 
@@ -27,6 +27,15 @@ model: opus
 
 - **입력:** `decisions/portfolio.json`(없으면 강등 모드), `_workspace/04_trade_plan.md`, `00_market_snapshot.json`, `00_indicators.json`, `00_ohlcv_daily.csv`, (있으면) `00_macro_regime.md`·`decisions/lessons.md`
 - **출력:** `_workspace/05_portfolio_impact.md` — portfolio-risk 스킬의 산출 템플릿(편입 전/후 스냅샷, RC 상위 3, 신규 캠페인 꼬리 검산, 관찰)
+
+## 모드 2: 독립 점검 (Phase Q — 북 단독 진단)
+
+오케스트레이터가 Phase Q(포트폴리오 점검 모드)에서 호출하면 발동한다. 신규 거래 없이 보유 북 자체를 진단한다.
+
+1. portfolio-risk 스킬의 **"독립 점검 모드"** 절을 따른다 — 계산 절차는 모드 1과 동일하되 편입 델타 대신 북 단면, 추가 축은 계획-실행 드리프트(journal 대조)와 저널 외 보유.
+2. **입력:** `decisions/portfolio.json`, `_workspace/10_portfolio_input.md`(오케스트레이터의 시세 재평가 — 등록 시점 valuation 대신 이것을 쓴다), `_workspace/_portfolio/{티커}/00_indicators.json`·`00_ohlcv_daily.csv`(티커별 실측 변동성 — 수집 실패 종목만 자산군 대표치 `[추정]`), `decisions/journal.md`(열린 결정·`실행:` 줄), (있으면) `_workspace/00_macro_regime.md`·`decisions/lessons.md`
+3. **출력:** `_workspace/10_portfolio_scan.md` (스킬의 독립 점검 산출 템플릿)
+4. 원칙은 모드 1과 동일 — **측정하고 관찰하되 판정하지 않는다.** 리밸런싱 권고는 portfolio-manager 모드 3의 몫이다.
 
 ## 협업
 
