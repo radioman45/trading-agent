@@ -1,7 +1,69 @@
 {
   "_readme": "보유 현황 SSOT — portfolio-risk-analyst와 portfolio-manager가 읽는다. 갱신 경로: 사용자 '보유 등록/갱신' 요청 또는 '체결 반영' 시 오케스트레이터가 갱신. 스키마는 .claude/skills/portfolio-risk/SKILL.md 참조. holdings가 비어 있으면 포트폴리오 영향 분석은 강등 모드 SINGLE_TRADE_ONLY(신규 캠페인 꼬리 검산만)로 동작하며, 이 상태에서 '포트폴리오 반영' 표현은 금지된다.",
-  "as_of": null,
+  "as_of": "2026-07-05",
   "base_currency": "KRW",
-  "cash_pct": null,
-  "holdings": []
+  "cash_pct": 22.38,
+  "valuation": {
+    "prices_as_of": "2026-07-05",
+    "source": "yfinance fast_info (등록 시점 평가용 — 분석 시에는 수집 스크립트로 재평가)",
+    "usdkrw": 1530.15,
+    "total_value_krw": 1116964929,
+    "note": "현금 2.5억(사용자 제공 '약/예정')·보유 평가액 8.67억. weight_pct 합 + cash_pct = 100.00 검산 통과"
+  },
+  "holdings": [
+    {
+      "ticker": "TSLA", "name": "테슬라", "market": "US",
+      "shares": 877, "avg_price": 298.68, "currency": "USD",
+      "weight_pct": 47.27,
+      "barbell_leg": "공격(AI/성장)",
+      "macro_drivers": ["AI·자율주행 내러티브", "금리(고밸류 성장주 할인율)", "EV·소비 사이클"],
+      "notes": "2계좌 합산(400주 @431.24 + 477주 @187.52 — 가중평단, 사용자 동의 2026-07-05)"
+    },
+    {
+      "ticker": "0167A0", "name": "SOL AI반도체TOP2플러스 ETF", "market": "KR",
+      "shares": 8530, "avg_price": 25750, "currency": "KRW",
+      "weight_pct": 18.66,
+      "barbell_leg": "공격(AI/성장)",
+      "macro_drivers": ["AI 캐펙스·반도체(HBM) 사이클", "원/달러", "금리"],
+      "notes": "저널 2026-06-24 결정의 만재 상한(공격 12%)을 초과하는 보유 — 계획-실행 드리프트, 점검 대상"
+    },
+    {
+      "ticker": "AGNC", "name": "AGNC Investment Corp", "market": "US",
+      "shares": 4566, "avg_price": 9.93, "currency": "USD",
+      "weight_pct": 6.88,
+      "barbell_leg": "방어(인컴)",
+      "macro_drivers": ["미국 금리·MBS 스프레드", "연준 정책(repo·QT)", "달러"],
+      "notes": "평단이 6/26 결정 기준가($10.62) 하회 — 결정 이전 취득 추정(기보유)"
+    },
+    {
+      "ticker": "088980", "name": "맥쿼리인프라", "market": "KR",
+      "shares": 2777, "avg_price": 10232, "currency": "KRW",
+      "weight_pct": 2.52,
+      "barbell_leg": "방어(인컴)",
+      "macro_drivers": ["한국 장기금리", "국내 인프라 규제"],
+      "notes": "6/24·7/1 캠페인 합산 보유(캠페인별 배분 미상 — 소급 등록)"
+    },
+    {
+      "ticker": "NVDA", "name": "엔비디아", "market": "US",
+      "shares": 50, "avg_price": 123.52, "currency": "USD",
+      "weight_pct": 1.33,
+      "barbell_leg": "공격(AI/성장)",
+      "macro_drivers": ["AI 캐펙스 사이클", "금리", "반도체 수출 규제"],
+      "notes": "평단이 6/14 결정 시점가($205) 대비 현저히 낮음 — 결정 이전 취득 추정(기보유), 조건부 진입 설계와 별개"
+    },
+    {
+      "ticker": "PLTR", "name": "팔란티어", "market": "US",
+      "shares": 50, "avg_price": 93.33, "currency": "USD",
+      "weight_pct": 0.89,
+      "barbell_leg": "공격(AI/성장)",
+      "macro_drivers": ["AI 소프트웨어·정부 지출", "금리(초고밸류 할인율)"]
+    },
+    {
+      "ticker": "SCHD", "name": "Schwab US Dividend Equity ETF", "market": "US",
+      "shares": 16, "avg_price": 30.72, "currency": "USD",
+      "weight_pct": 0.07,
+      "barbell_leg": "방어(배당/현금흐름)",
+      "macro_drivers": ["미국 금리", "경기 사이클"]
+    }
+  ]
 }
