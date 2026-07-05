@@ -1,10 +1,10 @@
 # Trading Agent — 3하네스 전체 구조 다이어그램
 
-작성: 2026-07-04 (독립 검증 2라운드 완료 시점) · 갱신: 2026-07-05 (수집 레이어 기계 판정 — session 블록·이중 소스 교차·DEGRADED_DATA 체인 배선 + CRYPTO 시장 모드 — always_open 24/7·크립토 교차 체인). 규칙 상세는 각 오케스트레이터 스킬(`trading-strategy` / `ipo-analysis` / `filings-analysis`)이 SSOT — 이 문서는 구조 조감도다.
+작성: 2026-07-04 (독립 검증 2라운드 완료 시점) · 갱신: 2026-07-05 (수집 레이어 기계 판정 — session 블록·이중 소스 교차·DEGRADED_DATA 체인 배선 + CRYPTO 시장 모드 — always_open 24/7·크립토 교차 체인 + cr1-ops 하류 배선 봉합 — FA 렌즈 대체·트레이더 세제 분기·바벨 공격 다리). 규칙 상세는 각 오케스트레이터 스킬(`trading-strategy` / `ipo-analysis` / `filings-analysis`)이 SSOT — 이 문서는 구조 조감도다.
 
 ## 하네스 1: 투자전략 트레이딩 (trading-strategy)
 
-14명 6계층 + 소싱·포트폴리오 레이어. L0∥L1 병렬 → 검증 게이트 → 4렌즈 팬아웃 → 2라운드 토론 → 거래 계획 → 리스크 4자 병렬 → PM 게이트 → 저널.
+14명 6계층 + 소싱·포트폴리오 레이어. L0∥L1 병렬 → 검증 게이트 → 4렌즈 팬아웃 → 2라운드 토론 → 거래 계획 → 리스크 4자 병렬 → PM 게이트 → 저널. **시장 3종(US·KR·CRYPTO)** — 크립토는 L1 기계 판정(always_open·교차)부터 FA 렌즈 대체·기술 미확정봉 고지·트레이더 세제 분기·바벨 공격 다리 태깅·doctor INFO 강등까지 전 계층에 분기가 배선돼 있다(주식 전제 상속 금지 — cr1-ops 검증 라운드).
 
 ```mermaid
 flowchart TB
@@ -18,14 +18,14 @@ flowchart TB
   P1 --> MS
   P1 --> MDE
 
-  MS --> G16{"Phase 1.6 사실 검증 게이트 [DEGRADED — 정정 1회]<br/>fact-checker (sonnet) → 00_factcheck.md<br/>시점(기계 session 앵커)·산술·출처·SSOT충돌·수집 레이어 정합<br/>재실패 시 '미확인' 강등 → 검증 모드 DEGRADED_DATA"}
+  MS --> G16{"Phase 1.6 사실 검증 게이트 [DEGRADED — 정정 1회]<br/>fact-checker (sonnet) → 00_factcheck.md<br/>시점(기계 session 앵커)·산술·출처·SSOT충돌·수집 레이어 정합<br/>(CRYPTO always_open: 당일 UTC 봉 상시 미확정 = 정상 — 거짓양성 ⛔ 금지)<br/>재실패 시 '미확인' 강등 → 검증 모드 DEGRADED_DATA"}
   MDE --> G16
   G16 -->|"⛔ 발견: 소스 1회 재호출"| MS
 
   G16 -->|PASS| P2
   subgraph P2["Phase 2 분석가 4렌즈 병렬·상호 격리 (opus)"]
-    FA["fundamental-analyst<br/>01_fundamental_report.md"]
-    TA["technical-analyst<br/>01_technical_report.md"]
+    FA["fundamental-analyst<br/>01_fundamental_report.md<br/>(CRYPTO: 재무 3표·레드플래그 대체 —<br/>공급·온체인·수급·규제 4축, MVRV류 앵커)"]
+    TA["technical-analyst<br/>01_technical_report.md<br/>(final=false면 미확정봉 고지 — 크립토 상시)"]
     NA["news-analyst<br/>01_news_report.md"]
     SA["sentiment-analyst<br/>01_sentiment_report.md"]
   end
@@ -34,18 +34,18 @@ flowchart TB
   R1 --> R2["R2: 교차 반박 (파일로만 교차)<br/>02_bull/bear_rebuttal.md"]
   R2 --> RM["research-manager 판정 (opus)<br/>03_research_plan.md — 방향·무효화·확신도(표준 앵커)"]
 
-  RM --> TR["Phase 4 trader (opus)<br/>04_trade_plan.md — 손절 먼저 비중 역산 + 꼬리 검산"]
+  RM --> TR["Phase 4 trader (opus)<br/>04_trade_plan.md — 손절 먼저 비중 역산 + 꼬리 검산<br/>(CRYPTO 직접 보유: 주식 세제 금지 — 가상자산 과세 확인·<br/>24/7 유동성 갭, 매매 수단(직접/ETF) 분기)"]
 
   TR --> P5
   subgraph P5["Phase 5 병렬·상호 격리"]
-    RD["risk-debater ×3 (공격 ∥ 중립 ∥ 보수)<br/>05_risk_*.md"]
+    RD["risk-debater ×3 (공격 ∥ 중립 ∥ 보수)<br/>05_risk_*.md<br/>(축⑦ 바벨: 크립토 = 공격 다리 고정 — '디지털 골드=방어' 금지)"]
     PRA["portfolio-risk-analyst (opus)<br/>05_portfolio_impact.md — 보유 북 영향<br/>모드: PORTFOLIO_AWARE / SINGLE_TRADE_ONLY / PORTFOLIO_STALE"]
   end
 
   P5 --> PM["Phase 6 portfolio-manager 최종 게이트 (opus)<br/>APPROVE / CONDITIONAL_APPROVE / REVISE / REJECT<br/>06_final_decision.md — 판정 요약 박스(검증·포트폴리오 모드) + 경고 대장<br/>검증 모드: factcheck '미확인' 또는 cross_check mismatch·단일소스 미검증 → DEGRADED_DATA<br/>+ journal append · 거시·역발상·포트폴리오·기회비용 게이트"]
   PM -->|"REVISE (1회): trader/RM 재작성<br/>+ 비중 변경 시 PRA 재계산"| TR
   PM --> P7["Phase 7: reports/ 복사 + decisions/ 커밋 + 요약 보고"]
-  P7 --> DOC{"harness doctor --harness trading [DEGRADED — 사후·정정 1회]<br/>09_doctor.json → 닥터리포트 보존<br/>산출물 존재·산술·판정-게이트 모순·모드 정합<br/>+ session 복사 충실성(생략·변조 FAIL)·mismatch↔DEGRADED_DATA 정합"}
+  P7 --> DOC{"harness doctor --harness trading [DEGRADED — 사후·정정 1회]<br/>09_doctor.json → 닥터리포트 보존<br/>산출물 존재·산술·판정-게이트 모순·모드 정합<br/>+ session 복사 충실성(생략·변조 FAIL)·mismatch↔DEGRADED_DATA 정합<br/>(CRYPTO always_open: final=false는 INFO 강등 — 상시 정상)"}
   DOC -->|"라벨 모순 FAIL: PM 1회 재호출<br/>케이스별 처방(⛔+승인 = REVISE 해소 마커 또는 REVISE/REJECT,<br/>미스라벨 = 라벨만 정정) + 저널 정정 append"| PM
   DOC --> EXP["report-explainer (sonnet)<br/>08_plain → 쉬운해설 (표준 산출물)"]
   EXP --> POD["팟캐스트 (선택 — 반드시 묻기)<br/>podcast-producer (sonnet) + notebooklm-audio"]
