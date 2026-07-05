@@ -30,7 +30,8 @@ model: sonnet
 2. **산술 자가검산 [HARD]:** 등락률=`(종가/전일종가)-1`, 시총=`가격×발행주식수`, 비중 합 ≤100% 등을 저장 전 검산. 항등식 불일치 수치는 폐기·재수집.
 3. **출처 실재성 [HARD]:** 모든 `source`는 이번 실행에서 실제 조회한 것. 기억 인용 금지. 못 구하면 `unavailable`.
 4. **세션 블록은 기계값 복사 [HARD] (2026-07-04, codex R4):** 수집 스크립트가 `00_indicators.json`에 남긴 `session` 블록을 **모든 필드 그대로**(market_session·data_as_of·last_close_is_final·staleness·requested_at_utc 등 블록 전체 — 서브셋 금지) 스냅샷 최상위 `session`으로 복사한다 — 세션을 스스로 재판정하거나 기계값과 다른 세션 서술을 하지 않는다(doctor가 불일치를 FAIL로 잡는다). `last_close_is_final: false`면 그 값은 확정 종가가 아니다(직전 확정 종가 채택). `stale_feed_suspect: true` 또는 `intraday_data_gap: true`(장중인데 당일 봉 없음 — 평일 휴장/피드 미갱신 의심)면 원인을 웹으로 확인해 `data_quality.notes`에 남긴다.
-5. **이중 소스 교차 처리:** 스크립트 `cross_check`가 `mismatch`면 원인 규명 전 값 채택 금지 — 채택값·대안값을 `data_quality.conflicts[]`에 기록하고 `price.confidence`는 최대 `"medium"`(최종 결정문 검증 모드 `DEGRADED_DATA` 트리거 — risk-gate ①). `skipped_primary_is_fallback`(yfinance 실패로 Stooq 단일 소스 폴백)이면 2차 교차가 없는 상태다 — `price.confidence` 최대 `"medium"` + 웹 시세 교차로 보강하고, `fast_info`가 비므로 시총·주식수는 웹 출처로 채운다. 한국 종목(`skipped_kr`)은 네이버 증권·KRX 교차가 2차 소스 역할을 한다.
+5. **이중 소스 교차 처리:** 스크립트 `cross_check`가 `mismatch`면 원인 규명 전 값 채택 금지 — 채택값·대안값을 `data_quality.conflicts[]`에 기록하고 `price.confidence`는 최대 `"medium"`(최종 결정문 검증 모드 `DEGRADED_DATA` 트리거 — risk-gate ①). `skipped_primary_is_fallback`(yfinance 실패로 Stooq 단일 소스 폴백)이면 2차 교차가 없는 상태다 — `price.confidence` 최대 `"medium"` + 웹 시세 교차로 보강하고, `fast_info`가 비므로 시총·주식수는 웹 출처로 채운다. 한국 종목(`skipped_kr`)은 네이버 증권·KRX 교차가, 비달러 쿼트 크립토(`skipped_crypto_quote`)는 업비트·빗썸 교차가 2차 소스 역할을 한다.
+6. **CRYPTO 특칙:** 크립토는 `fast_info`의 시총·주식수가 null이다 — 시총·유통량은 CoinGecko·CoinMarketCap 웹 조회로 채우고 상호 교차한다(유통량을 `shares_outstanding` 필드에, source 명시). `financials`·`valuation`은 `unavailable`(재무제표 비적용). 당일 UTC 봉은 항상 미확정(`last_close_is_final: false`)이므로 `price`에는 직전 마감 UTC 일봉 종가를 쓰고 24/7 변동 중임을 서술한다.
 
 저장 직전 위 항목을 "작성 전 검증 체크리스트"와 함께 통과시킨다.
 

@@ -5,12 +5,15 @@ market-data-engineer 에이전트가 스냅샷 작성 시 사용한다.
 yfinance로 일봉 OHLCV(기본 1년)를 받아 CSV로 저장하고,
 기술지표(SMA/EMA/MACD/RSI/볼린저/ATR/수익률/낙폭)를 JSON으로 출력한다.
 
-수집 레이어 기계 판정 (2026-07-04, codex R4 반영):
-  - session 블록: 시장(KR/US) 세션 상태(pre_open/regular/post_close/weekend)·data_as_of·
-    last_close_is_final·staleness를 코드로 판정해 기록한다 — LLM이 세션을 추정하지 않게 한다.
-  - cross_check 블록: 미국 티커는 Stooq 종가와 이중 소스 교차 검증(허용 오차 기본 1%),
-    불일치는 mismatch로 기록한다. 한국 티커는 스크립트 밖(KRX·네이버 교차)이라 skipped_kr.
-  - yfinance 전체 실패 시 미국 티커는 Stooq를 1차 소스로 자동 폴백하고 source_primary에 기록한다.
+수집 레이어 기계 판정 (2026-07-04, codex R4 반영 / 2026-07-05 CRYPTO 모드):
+  - session 블록: 시장(KR/US/CRYPTO) 세션 상태를 코드로 판정해 기록한다 — LLM이 세션을 추정하지 않게 한다.
+    KR/US = pre_open/regular/post_close/weekend, CRYPTO = always_open(24/7, UTC 일봉 마감 —
+    당일 UTC 봉은 항상 미확정).
+  - cross_check 블록: 미국 티커는 stooq→nasdaq, 크립토(USD/USDT 쿼트)는 coinbase→binance 체인과
+    이중 소스 교차 검증(허용 오차 기본 1%), 불일치는 mismatch로 기록한다.
+    한국 티커(skipped_kr)·비달러 쿼트 크립토(skipped_crypto_quote)는 LLM 레이어 교차 담당.
+  - yfinance 전체 실패 시 미국 티커는 Stooq를 1차 소스로 자동 폴백하고 source_primary에 기록한다
+    (크립토·한국 티커는 폴백 없음 — 클린 실패 후 에이전트 에러 핸들링).
 
 사용법:
   python collect_market_data.py --ticker NVDA --out-dir _workspace
@@ -49,11 +52,31 @@ def _round(v, n=4):
     return round(f, n)
 
 
+# 크립토 쿼트 통화 집합 — yfinance 크립토 표기({BASE}-{QUOTE})의 QUOTE 판별용.
+# BRK-B·BF-B 같은 미국 주식 클래스 표기(대시 뒤 1글자)는 통화 코드가 아니라서 걸러진다.
+CRYPTO_QUOTES = {"USD", "USDT", "USDC", "KRW", "EUR", "JPY", "GBP", "AUD",
+                 "CAD", "CHF", "CNY", "HKD", "SGD", "BTC", "ETH"}
+
+
+def is_crypto_symbol(sym: str) -> bool:
+    """yfinance 크립토 표기(BTC-USD, 1INCH-USD, ETH-KRW 등)인지 판별한다.
+    base는 영숫자 허용(1INCH·0X 등 숫자 포함 토큰) — 단 최소 한 글자는 알파벳."""
+    sym = (sym or "").upper()
+    if "-" not in sym or "." in sym:
+        return False
+    base, quote = sym.rsplit("-", 1)
+    return (quote in CRYPTO_QUOTES and base.isalnum() and 2 <= len(base) <= 6
+            and any(c.isalpha() for c in base))
+
+
 def detect_market(ticker: str, resolved: str = "") -> str:
-    """티커 형태로 시장을 감지한다. .KS/.KQ 또는 6자리 숫자 = KR, 그 외 US."""
+    """티커 형태로 시장을 감지한다. .KS/.KQ 또는 6자리 숫자 = KR,
+    {BASE}-{쿼트통화}(예 BTC-USD) = CRYPTO, 그 외 US."""
     sym = (resolved or ticker or "").upper()
     if sym.endswith(".KS") or sym.endswith(".KQ"):
         return "KR"
+    if is_crypto_symbol(sym):
+        return "CRYPTO"
     base = sym.split(".")[0]
     if base.isdigit() and len(base) == 6:
         return "KR"
@@ -88,7 +111,37 @@ def judge_session(market: str, now_utc: datetime, last_data_date) -> dict:
     휴장일 캘린더는 내장하지 않는다(외부 의존 없이 결정적으로 동작) — 대신
     expected_last_trading_date와의 격차를 stale_feed_suspect로 드러내고,
     calendar_status로 근사 한계를 정직하게 라벨링한다.
+
+    CRYPTO는 24/7 시장이라 거래소 세션 개념이 없다 — 일봉은 UTC 자정 마감이며,
+    당일 UTC 봉은 항상 진행 중(미확정)이다. weekend/pre_open/intraday_data_gap은 적용되지 않는다.
     """
+    if market == "CRYPTO":
+        local_date = now_utc.date()
+        expected = local_date - timedelta(days=1)  # 마지막으로 마감된 UTC 일봉
+        out = {
+            "market": market,
+            "tz": "UTC (24/7 continuous)",
+            "requested_at_utc": now_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "requested_at_local": now_utc.strftime("%Y-%m-%dT%H:%M"),
+            "market_session": "always_open",
+            "calendar_status": "continuous_24_7",
+            "data_as_of": str(last_data_date) if last_data_date else None,
+            "expected_last_trading_date": str(expected),
+            "staleness_calendar_days": (local_date - last_data_date).days if last_data_date else None,
+            "last_close_is_final": None,
+            "stale_feed_suspect": None,
+            "intraday_data_gap": None,  # 세션 개념 없음 — 지연은 stale_feed_suspect가 담당
+        }
+        if last_data_date:
+            if last_data_date > local_date:
+                out["staleness_calendar_days"] = None
+                out["anomaly"] = "last_data_date가 판정 시각보다 미래 — now_utc 주입 값 확인 필요"
+                return out
+            # 당일 UTC 봉은 진행 중 — 마지막 행이 오늘이면 그 값은 확정 종가가 아니다
+            out["last_close_is_final"] = last_data_date < local_date
+            out["stale_feed_suspect"] = last_data_date < expected
+        return out
+
     if market == "KR":
         offset, tz_label = timedelta(hours=9), "Asia/Seoul (UTC+9)"
         open_hm, close_hm = (9, 0), (15, 30)
@@ -192,6 +245,28 @@ def fetch_nasdaq_daily(symbol_base: str, end_date: date) -> pd.DataFrame:
     raise RuntimeError(f"nasdaq chart 실패 — {last_err}")
 
 
+def fetch_coinbase_daily(product: str) -> pd.DataFrame:
+    """Coinbase Exchange 공개 candles API 일봉 종가(무인증). product 예: BTC-USD.
+    반환 행: [time(버킷 시작 UTC), low, high, open, close, volume] 최신순."""
+    url = f"https://api.exchange.coinbase.com/products/{product.upper()}/candles?granularity=86400"
+    rows = json.loads(_http_get(url, accept="application/json"))
+    if not isinstance(rows, list) or not rows:
+        raise RuntimeError(f"coinbase candles 비어 있음/오류 응답: {url}")
+    recs = [(pd.to_datetime(int(r[0]), unit="s"), float(r[4])) for r in rows]
+    return pd.DataFrame(recs, columns=["Date", "Close"]).set_index("Date").sort_index()
+
+
+def fetch_binance_daily(base: str, quote: str) -> pd.DataFrame:
+    """Binance 공개 klines API 일봉 종가(무인증). USD 쿼트는 USDT로 근사(통상 괴리 <0.3%)."""
+    symbol = f"{base}{'USDT' if quote == 'USD' else quote}".upper()
+    url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval=1d&limit=30"
+    rows = json.loads(_http_get(url, accept="application/json"))
+    if not isinstance(rows, list) or not rows:
+        raise RuntimeError(f"binance klines 비어 있음/오류 응답: {url}")
+    recs = [(pd.to_datetime(int(r[0]), unit="ms"), float(r[4])) for r in rows]
+    return pd.DataFrame(recs, columns=["Date", "Close"]).set_index("Date").sort_index()
+
+
 def _close_by_date(frame: pd.DataFrame) -> pd.Series:
     """Close 시리즈를 tz 제거·자정 정규화 날짜 인덱스로 변환 (yfinance는 tz-aware 인덱스)."""
     idx = pd.DatetimeIndex(frame.index)
@@ -202,7 +277,8 @@ def _close_by_date(frame: pd.DataFrame) -> pd.Series:
 
 def cross_check_close(df: pd.DataFrame, ticker: str, market: str,
                       tolerance_pct: float, end_date: date) -> dict:
-    """1차 소스(yfinance) 종가를 독립 2차 소스와 같은 날짜로 대조한다. 체인: stooq → nasdaq."""
+    """1차 소스(yfinance) 종가를 독립 2차 소스와 같은 날짜로 대조한다.
+    체인: US = stooq → nasdaq / CRYPTO(USD·USDT 쿼트) = coinbase → binance."""
     out = {
         "primary": "yfinance", "secondary": None, "compared_date": None,
         "primary_close": _round(df["Close"].iloc[-1], 4), "secondary_close": None,
@@ -211,10 +287,23 @@ def cross_check_close(df: pd.DataFrame, ticker: str, market: str,
     if market == "KR":
         out["status"] = "skipped_kr"  # KRX·네이버 교차는 LLM 레이어 담당 (스킬 §3)
         return out
-    base = ticker.split(".")[0]
+    sym = (ticker or "").upper()
+    if market == "CRYPTO":
+        base, quote = sym.rsplit("-", 1) if "-" in sym else (sym, "")
+        if quote not in ("USD", "USDT"):
+            out["status"] = "skipped_crypto_quote"  # KRW 등 비달러 쿼트는 업비트 등 LLM 교차 담당
+            return out
+        # Coinbase는 USDT 페어 다수 미상장 — USDT 쿼트도 USD 페어로 조회(USDT≈USD, 교차 목적상 근사 허용)
+        cb_product = f"{base}-USD"
+        chain = (("coinbase" if quote == "USD" else "coinbase(USD 근사)",
+                  lambda: fetch_coinbase_daily(cb_product)),
+                 ("binance(USDT 근사)" if quote == "USD" else "binance",
+                  lambda: fetch_binance_daily(base, quote)))
+    else:
+        chain = (("stooq", lambda: fetch_stooq_daily(sym.split(".")[0])),
+                 ("nasdaq", lambda: fetch_nasdaq_daily(sym.split(".")[0], end_date)))
     errors = []
-    for name, fetch in (("stooq", lambda: fetch_stooq_daily(base)),
-                        ("nasdaq", lambda: fetch_nasdaq_daily(base, end_date))):
+    for name, fetch in chain:
         try:
             sdf = fetch()
         except Exception as e:  # noqa: BLE001 — 다음 소스 시도
@@ -385,7 +474,7 @@ def main():
     ap.add_argument("--from-csv", help="기존 OHLCV CSV로 지표만 계산 (yfinance 생략)")
     ap.add_argument("--period", default="1y", help="수집 기간 (기본 1y, 예: 2y)")
     ap.add_argument("--out-dir", default="_workspace", help="출력 디렉토리")
-    ap.add_argument("--market", choices=["US", "KR"], help="시장 강제 지정 (감지 무시)")
+    ap.add_argument("--market", choices=["US", "KR", "CRYPTO"], help="시장 강제 지정 (감지 무시)")
     ap.add_argument("--xcheck-tolerance", type=float, default=1.0,
                     help="이중 소스 종가 허용 오차 %% (기본 1.0)")
     ap.add_argument("--no-xcheck", action="store_true", help="이중 소스 교차 검증 생략")
@@ -402,8 +491,9 @@ def main():
         t = (args.ticker or "").upper()
         base = t.split(".")[0]
         positive_kr = t.endswith((".KS", ".KQ")) or (base.isdigit() and len(base) == 6)
-        positive_us = base.isalpha() and 1 <= len(base) <= 5
-        if not (positive_kr or positive_us):
+        positive_crypto = is_crypto_symbol(t)
+        positive_us = (not positive_crypto) and base.isalpha() and 1 <= len(base) <= 5
+        if not (positive_kr or positive_us or positive_crypto):
             print(json.dumps({"status": "error",
                               "error": f"--from-csv에 --market 필요 — 티커 '{args.ticker or ''}'로 시장 확신 불가 (US 디폴트 금지)"},
                              ensure_ascii=False))
@@ -443,7 +533,7 @@ def main():
             except Exception as yf_err:  # noqa: BLE001 — 미국 티커는 Stooq를 1차 소스로 자동 폴백
                 market_guess = args.market or detect_market(args.ticker or "")
                 if market_guess != "US":
-                    raise  # 한국 폴백(KRX·korean-stock-search)은 LLM 레이어 담당 — 에이전트 정의 참조
+                    raise  # 한국(KRX·korean-stock-search)·크립토(웹 시세) 폴백은 LLM 레이어 담당 — 에이전트 정의 참조
                 # Stooq가 안티봇 챌린지를 반환하면 폴백도 클린 실패(status:error)로 끝난다 —
                 # 이후는 에이전트 에러 핸들링(웹 시세 수집) 담당. Nasdaq chart는 종가만 제공해 지표 원천 불가
                 df = fetch_stooq_daily((args.ticker or "").split(".")[0], full=True)

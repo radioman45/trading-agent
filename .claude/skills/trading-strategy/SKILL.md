@@ -1,6 +1,6 @@
 ---
 name: trading-strategy
-description: 투자전략 트레이딩 하네스 오케스트레이터(TradingAgents 구조 + 뉴로퓨전/월가아재 톱다운 보강). 거시 전략가가 시장 레짐(risk-on/off·유동성·바벨)을 먼저 판정하고, 시장 데이터 엔지니어가 스냅샷·기술지표로 고정하며, 분석가 4명(기본적·기술적·뉴스·심리)이 병렬 분석, Bull/Bear 리서처가 2라운드 토론, 리서치 매니저가 판정해 투자 계획 수립, 트레이더가 거래 계획(진입·손절·비중·목표) 변환, 리스크 토론자 3성향(공격/중립/보수)+포트폴리오 리스크 분석가가 병렬 평가, 포트폴리오 매니저가 거시·바벨·역발상·포트폴리오 게이트로 최종 APPROVE/CONDITIONAL_APPROVE/REVISE/REJECT 판정 후 의사결정 저널에 기록하는 파이프라인을 조율한다. "트레이딩 분석", "투자전략 분석", "{티커} 매매 판단", "사야 돼 팔아야 돼", "트레이딩 전략 세워줘", "거래해도 될까", "포지션 잡아도 될까", "투자 분석", "거시 레짐", "시장 국면" 요청 시 반드시 이 스킬을 사용한다. 능동 모드도 처리한다: "아이디어 스캔", "종목 발굴", "뭐 살까", "살 만한 종목", "워치리스트", "포지션 점검", "트리거 점검", "보유 등록", "포트폴리오 등록", "체결 반영", "실제로 샀어". 후속 요청도 처리한다: "다시 실행", "재실행", "업데이트", "거시만 다시", "레짐 갱신", "분석가 보고서만 다시", "토론 한 라운드 더", "강세론/약세론 보강", "판정만 다시", "거래계획만 다시", "리스크 검토만 다시", "최종 결정만 다시", "이전 결과 기반으로", "결과 개선", "복기", "결과 반영". 단, 단순 주가 조회나 일반 투자 상식 질문은 직접 응답해도 된다.
+description: 투자전략 트레이딩 하네스 오케스트레이터(TradingAgents 구조 + 뉴로퓨전/월가아재 톱다운 보강). 거시 전략가가 시장 레짐(risk-on/off·유동성·바벨)을 먼저 판정하고, 시장 데이터 엔지니어가 스냅샷·기술지표로 고정하며, 분석가 4명(기본적·기술적·뉴스·심리)이 병렬 분석, Bull/Bear 리서처가 2라운드 토론, 리서치 매니저가 판정해 투자 계획 수립, 트레이더가 거래 계획(진입·손절·비중·목표) 변환, 리스크 토론자 3성향(공격/중립/보수)+포트폴리오 리스크 분석가가 병렬 평가, 포트폴리오 매니저가 거시·바벨·역발상·포트폴리오 게이트로 최종 APPROVE/CONDITIONAL_APPROVE/REVISE/REJECT 판정 후 의사결정 저널에 기록하는 파이프라인을 조율한다. "트레이딩 분석", "투자전략 분석", "{티커} 매매 판단", "사야 돼 팔아야 돼", "트레이딩 전략 세워줘", "거래해도 될까", "포지션 잡아도 될까", "투자 분석", "거시 레짐", "시장 국면" 요청 시 반드시 이 스킬을 사용한다. 크립토 자산도 지원한다: "비트코인/이더리움 분석", "BTC 매매 판단", "코인 사야 돼", "크립토 트레이딩" (직접 티커 BTC-USD 또는 현물 ETF — 매매 수단을 먼저 확인). 능동 모드도 처리한다: "아이디어 스캔", "종목 발굴", "뭐 살까", "살 만한 종목", "워치리스트", "포지션 점검", "트리거 점검", "보유 등록", "포트폴리오 등록", "체결 반영", "실제로 샀어". 후속 요청도 처리한다: "다시 실행", "재실행", "업데이트", "거시만 다시", "레짐 갱신", "분석가 보고서만 다시", "토론 한 라운드 더", "강세론/약세론 보강", "판정만 다시", "거래계획만 다시", "리스크 검토만 다시", "최종 결정만 다시", "이전 결과 기반으로", "결과 개선", "복기", "결과 반영". 단, 단순 주가 조회나 일반 투자 상식 질문은 직접 응답해도 된다.
 ---
 
 # Trading Strategy — 투자전략 트레이딩 하네스
@@ -47,13 +47,14 @@ description: 투자전략 트레이딩 하네스 오케스트레이터(TradingAg
 ## Phase 1: 입력 수집 + L0 거시·L1 데이터 고정 (병렬)
 
 1. 분석 대상(회사명/티커) 확인. 없으면 사용자에게 묻는다. 사용자 맥락(성향·기간·보유 여부)은 선택 — 없으면 3성향 분기로 진행.
+   - **크립토 매매 수단 확인:** "비트코인 분석"처럼 자산명만 오면 직접 티커(BTC-USD — 코인 현물)와 현물 ETF(IBIT 등 — 증권 계좌) 중 무엇을 매매하는지 확인한다. 분석 대상과 실제 매매 수단이 다르면 거래 계획(수수료·세금·거래 시간)이 틀어진다. ETF면 US 주식 경로로, 직접이면 CRYPTO 경로(24/7 세션·온체인 렌즈)로 진행.
    - **현재 시각·세션 앵커 고정 [HARD]:** 진행 전 **현재 날짜·시각(요일 포함)과 대상 시장의 세션 상태**(개장 전 / 장중 / 마감)를 `date` 등으로 확인해 `00_input.md`에 기록한다. 모든 하류 에이전트는 이 앵커 기준으로 "마감된 세션의 수치만 사실"로 다룬다(할루시네이션 방지 — `docs/anti-hallucination-verification-plan.md`).
 2. **Pending 결산 점검 (자동):** `decisions/journal.md`에 `결과: (미기록` 항목이 있으면 본 파이프라인 진행 전에 결산한다. 항목별 티커로 수집 스크립트를 실행(`--out-dir _workspace/_pending`)해 결정 시점 대비 등락률을 구하고, 같은 기간 벤치마크 등락(당시 결정의 스냅샷/reports에 기록된 `benchmark.primary` 레벨 대조, 또는 벤치마크 티커로 스크립트 실행)으로 **알파**를 산출해 해당 항목의 `결과:` 줄을 갱신한다 — 형식: `결과: [중간점검 {YYYY-MM-DD}] 결정 후 {±X}%, 벤치마크 {±Y}% (알파 {±Z}%p) — 복기 미실시`. 이 줄 외에는 수정 금지. 갱신 내용을 사용자에게 1줄씩 보고하고 복기(Phase R)를 제안한다 — 특히 이번 분석 대상과 같은 티커면 교훈이 이번 실행에 반영되도록 복기를 먼저 권한다. 교훈 추출과 결과 확정은 복기에서만 한다.
 3. **보유 현황 확인:** `decisions/portfolio.json`을 읽는다. holdings가 있으면 `00_input.md`에 보유 요약(종목 수·현금 비중·이번 대상 기보유 여부)을 기재하고, 비어 있으면 "보유 미등록 — 포트폴리오 영향 분석은 강등 모드"를 기재한다(최초 1회 "보유 등록"을 최종 보고에서 권고).
 4. `_workspace/00_input.md` 작성:
    ```markdown
    # 분석 입력
-   - 대상: {회사명} ({티커}) / 분석 시점: {YYYY-MM-DD} / 시장: {US|KR}
+   - 대상: {회사명} ({티커}) / 분석 시점: {YYYY-MM-DD} / 시장: {US|KR|CRYPTO}
    - 사용자 맥락: {성향/기간/보유 여부 또는 "일반 분석 — 3성향 분기"}
    - 보유 현황: {portfolio.json 요약 또는 "미등록"}
    ```
@@ -98,7 +99,7 @@ Agent(subagent_type="fact-checker", model="sonnet",
 
 ```
 # 향후 sonnet A/B 후보(현재는 품질 보호 위해 opus)
-Agent(subagent_type="fundamental-analyst", prompt="00_input.md·00_market_snapshot.json·00_macro_regime.md(있으면, 밸류 국면 배경)를 읽고 analyst-toolkit 스킬(+references/fundamental.md)로 _workspace/01_fundamental_report.md 작성")
+Agent(subagent_type="fundamental-analyst", prompt="00_input.md·00_market_snapshot.json·00_macro_regime.md(있으면, 밸류 국면 배경)를 읽고 analyst-toolkit 스킬(+references/fundamental.md)로 _workspace/01_fundamental_report.md 작성. 스냅샷 market=CRYPTO면 재무제표 축을 대체하라: ①공급 구조(발행 일정·반감기·소각·스테이킹 비율) ②온체인 활동(활성 주소·거래량·해시레이트/검증자) ③수급(현물 ETF 순유입·거래소 잔고 추이·기관 보유) ④규제·제도 이벤트 — 각 항목 웹 출처 명시, 밸류에이션은 실현시총·MVRV 등 크립토 지표로")
 Agent(subagent_type="technical-analyst",   prompt="00_indicators.json·00_ohlcv_daily.csv·스냅샷·00_macro_regime.md(있으면)를 읽고 analyst-toolkit 스킬(+references/technical.md, 대형주·지수면 market-structure.md)로 _workspace/01_technical_report.md 작성. 지표 재계산 금지")
 Agent(subagent_type="news-analyst",        prompt="스냅샷·00_macro_regime.md(있으면, 거시는 종목 전이 경로로만)를 읽고 analyst-toolkit 스킬(+references/news.md)로 타임라인·이벤트 캘린더 포함 _workspace/01_news_report.md 작성")
 Agent(subagent_type="sentiment-analyst",   prompt="스냅샷·00_macro_regime.md(있으면)를 읽고 analyst-toolkit 스킬(+references/sentiment.md, market-structure.md)로 정량 심리·쏠림·시장구조 포지셔닝 판정 포함 _workspace/01_sentiment_report.md 작성")

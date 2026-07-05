@@ -185,8 +185,11 @@ class Doctor:
                 self.add("snapshot:session.anomaly", FAIL,
                          f"수집 스크립트가 이상 상태를 보고: {fresh['anomaly']} — 데이터·판정 시각 정합 확인 전 사용 금지")
             if fresh.get("last_close_is_final") is False:
-                self.add("snapshot:session.final", WARN,
-                         "last_close_is_final=false — 마지막 행이 미확정 세션 값. price가 직전 확정 종가인지 확인")
+                # CRYPTO(always_open)는 당일 UTC 봉이 항상 미확정 — 상시 정상 상태라 WARN이면 경보 피로
+                crypto = fresh.get("market_session") == "always_open"
+                self.add("snapshot:session.final", INFO if crypto else WARN,
+                         "last_close_is_final=false — 마지막 행이 미확정 세션 값. price가 직전 확정 종가인지 확인"
+                         + (" (CRYPTO 24/7 — 상시 정상)" if crypto else ""))
             if fresh.get("stale_feed_suspect") is True:
                 self.add("snapshot:session.stale", WARN,
                          "stale_feed_suspect=true — 예상 최종 거래일보다 데이터가 뒤처짐(휴장일 가능성 포함, 원인 확인)")
